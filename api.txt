@@ -1,0 +1,10 @@
+login api 
+http://localhost:8000/api/login.php
+
+roles api
+get all role > http://localhost:8000/api/roles/index.php
+
+
+user api
+get all user for admin > http://localhost:8000/api/users/index.php?user_id=2
+get user data with user id > http://localhost:8000/api/users/show_user.php?user_id=2
