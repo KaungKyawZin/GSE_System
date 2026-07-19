@@ -17,7 +17,56 @@
     </style>
 </head>
 <body>
+<script>
+ 
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
 
+    // Stop normal form submit
+    e.preventDefault();
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    try {
+
+        const response = await fetch("http://localhost:8000/api/login.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if(data.success){
+
+            document.getElementById("message").innerHTML = "Login Success";
+
+            // Save login token
+            localStorage.setItem("token", data.token);
+
+            // Redirect
+            window.location.href = "dashboard.html";
+
+        }else{
+
+            document.getElementById("message").innerHTML = data.message;
+
+        }
+
+    }catch(err){
+
+        console.log(err);
+
+    }
+
+});
+ 
+</script>
 <div class="login-card">
     <h2>GSE Smart System</h2>
     
