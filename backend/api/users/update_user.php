@@ -9,19 +9,16 @@ $data = json_decode(
     true
 );
 
+$user_id = $data["user_id"] ?? null;
 $role_id = $data["role_id"] ?? null;
 $full_name = trim($data["full_name"] ?? "");
 $username = trim($data["username"] ?? "");
 $email = trim($data["email"] ?? "");
-$password = $data["password"] ?? "";
 $phone = trim($data["phone"] ?? "");
 $status = $data["status"] ?? "Active";
 
 if (
-    !$role_id ||
-    $full_name === "" ||
-    $username === "" ||
-    $password === ""
+    !$user_id || !$role_id || $full_name === "" || $username === ""
 ) {
 
     http_response_code(400);
@@ -34,46 +31,31 @@ if (
     exit;
 }
 
-$password_hash = password_hash(
-    $password,
-    PASSWORD_DEFAULT
-);
-
 $sql = "
-    INSERT INTO users (
-        role_id,
-        full_name,
-        username,
-        email,
-        password_hash,
-        phone,
-        status
-    )
-    VALUES (
-        :role_id,
-        :full_name,
-        :username,
-        :email,
-        :password_hash,
-        :phone,
-        :status
-    )
+    UPDATE users
+    SET
+        role_id = :role_id,
+        full_name = :full_name,
+        username = :username,
+        email = :email,
+        phone = :phone,
+        status = :status
+    WHERE user_id = :user_id
 ";
 
 $stmt = $pdo->prepare($sql);
 
 $stmt->execute([
+    ":user_id" => $user_id,
     ":role_id" => $role_id,
     ":full_name" => $full_name,
     ":username" => $username,
     ":email" => $email,
-    ":password_hash" => $password_hash,
     ":phone" => $phone,
     ":status" => $status
 ]);
 
 echo json_encode([
     "success" => true,
-    "message" => "User created successfully",
-    "user_id" => $pdo->lastInsertId()
+    "message" => "User updated successfully"
 ]);
