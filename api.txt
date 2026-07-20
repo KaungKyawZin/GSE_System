@@ -1,10 +1,66 @@
 login api 
 http://localhost:8000/api/login.php
+header > Content-Type: application/json
+body > {
+  "username": "admin",
+  "password":  "admin123"
+}
+
+response > {
+    "success": true,
+    "message": "Login successful",
+    "data": {
+        "user_id": 2,
+        "username": "admin",
+        "email": "admin@example.com",
+        "full_name": "System Administrator",
+        "status": "ACTIVE",
+        "role_id": 1,
+        "role_name": "Admin"
+    }
+}
 
 roles api
-get all role > http://localhost:8000/api/roles/index.php
+get all role for admin role > http://localhost:80/api/roles/index.php?user_id=2
+get role data with role id > http://localhost:80/api/roles/show_roles.php?role_id=2
+create role > http://localhost:8000/api/roles/create_role.php
+body > {
+    "role_name": "test",
+    "description": "tester"
+    }
 
+update role > http://localhost:8000 /api/roles/update_role.php
+body > {   
+    "role_id" : 7,
+    "role_name": "testing",
+    "description": "tester"
+}
+
+delete role > http://localhost:8000 /api/roles/delete_role.php
+body > {
+    "role_id" : 7
+    }
 
 user api
-get all user for admin > http://localhost:8000/api/users/index.php?user_id=2
+get all user for admin user > http://localhost:8000/api/users/index.php?user_id=2
 get user data with user id > http://localhost:8000/api/users/show_user.php?user_id=2
+create user > http://localhost:8000/api/users/create_user.php
+header > Content-Type: application/json
+body > {
+    "role_id": 3,
+    "full_name": "KyawKaung",
+    "username": "KyawKaung_123",
+    "email": "KyawKaung_123@gmial.com",
+    "password": "KyawKaung123",
+    "phone": "09123456789",
+    "status": "Active"
+	}
+
+
+INSERT INTO roles (role_name, description)
+VALUES
+    ('Manager', 'GSE Management'),
+    ('Supervisor', 'GSE Operations Supervisor'),
+    ('Inspector', 'Vehicle Inspection Officer'),
+    ('Technician', 'Vehicle Maintenance Technician'),
+    ('Driver', 'GSE Vehicle Driver');
