@@ -56,6 +56,21 @@ body > {
     "status": "Active"
 	}
 
+update user > http://localhost:8000/api/users/update_user.php
+body > {
+    "full_name": "KyawKaung",
+    "username": "KyawKaung_123",
+    "email": "KyawKaung_123@gmial.com",
+    "password": "KyawKaung123",
+    "phone": "09123456789",
+    "status": "Active"
+	}
+
+delete user > http://localhost:8000/api/users/delete_user.php
+body > {
+    "user_id" : 7
+    }
+
 
 INSERT INTO roles (role_name, description)
 VALUES
