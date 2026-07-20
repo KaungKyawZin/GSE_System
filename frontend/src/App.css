@@ -182,3 +182,458 @@
     border-right-color: var(--border);
   }
 }
+/* Custom Palette Variables mapped from design sheet */
+:root {
+  --bg-main: #0F172A;       /* Deep Slate Gray */
+  --bg-card: #1E293B;       /* Dark Muted Blue */
+  --bg-hover: #334155;      /* Dark Slate Hover */
+  --primary: #38BDF8;       /* Electric Blue / Cyan */
+  --text-main: #F8FAFC;     /* Off-White / Snow */
+  --text-muted: #94A3B8;    /* Cool Muted Gray */
+}
+
+/* Force everything to take up the full screen height and width */
+html, body, #root {
+  width: 100% !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  background-color: var(--bg-main) !important;
+  box-sizing: border-box;
+}
+
+/* Base Body Styling */
+body { 
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+  color: var(--text-main);
+}
+
+/* Modern Card Container centered smoothly */
+.login-card { 
+  background: var(--bg-card); 
+  padding: 40px; 
+  border-radius: 12px; 
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3); 
+  width: 100%; 
+  max-width: 400px; 
+  box-sizing: border-box;
+  margin: auto; /* Pushes the card cleanly into the absolute center */
+}
+
+/* Professional Typography */
+.login-card h2 { 
+  margin-top: 0; 
+  margin-bottom: 28px;
+  color: var(--text-main); 
+  text-align: center; 
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+/* Form Grouping */
+.form-group { 
+  margin-bottom: 20px; 
+}
+
+.form-group label { 
+  display: block; 
+  margin-bottom: 8px; 
+  color: var(--text-muted); 
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+}
+
+/* Sleek Inputs with Focus Transitions */
+.form-group input { 
+  width: 100%; 
+  padding: 12px; 
+  border: 1px solid #475569; 
+  background-color: #0F172A;
+  color: var(--text-main);
+  border-radius: 6px; 
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+/* Action Button Matching Palette Accent */
+.btn-login { 
+  width: 100%; 
+  padding: 12px; 
+  background-color: var(--primary); 
+  border: none; 
+  color: #0F172A; 
+  font-size: 16px; 
+  font-weight: 600;
+  border-radius: 6px; 
+  cursor: pointer; 
+  transition: background-color 0.2s, transform 0.1s;
+  margin-top: 10px;
+}
+
+.btn-login:hover { 
+  background-color: #7DD3FC; 
+}
+
+.btn-login:active {
+  transform: scale(0.98);
+}
+
+/* Dynamic Notification Text Styling */
+.feedback-msg { 
+  text-align: center; 
+  margin-top: 20px; 
+  margin-bottom: 0;
+  font-size: 14px; 
+  font-weight: 500;
+}
+
+.feedback-msg.success {
+  color: #4ADE80; 
+}
+
+.feedback-msg.error {
+  color: #F87171; 
+}
+
+/* Layout Blueprint Grid */
+.admin-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+/* Sidebar Dashboard Strip Layout */
+.admin-sidebar {
+  width: 260px;
+  background-color: var(--bg-card);
+  border-right: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.sidebar-header h3 {
+  margin-top: 0;
+  margin-bottom: 32px;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.sidebar-menu a {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+  background-color: var(--bg-hover);
+  color: var(--text-main);
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+/* Main Dashboard Sheet Container */
+.admin-content {
+  flex-grow: 1;
+  padding: 40px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 20px;
+}
+
+.content-header h1 { margin: 0; font-size: 28px; }
+.welcome-text { margin: 4px 0 0; color: var(--text-muted); }
+
+.system-status-indicator {
+  background: var(--bg-card);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot.online {
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Operational Metric Grid Boxes */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1-fraction));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.metric-card {
+  background: var(--bg-card);
+  padding: 24px;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary);
+}
+
+.metric-card.active-gse { border-left-color: #22c55e; }
+.metric-card.warning-gse { border-left-color: #eab308; }
+
+.metric-label { color: var(--text-muted); font-size: 14px; display: block; margin-bottom: 8px; }
+.metric-value { margin: 0; font-size: 28px; font-weight: 600; }
+
+/* Control Tables Panel */
+.table-section { background: var(--bg-card); border-radius: 8px; padding: 24px; }
+.section-title h3 { margin-top: 0; margin-bottom: 20px; }
+
+.responsive-table-wrapper { width: 100%; overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; text-align: left; }
+.admin-table th { padding: 14px; border-bottom: 2px solid #334155; color: var(--text-muted); font-size: 14px; }
+.admin-table td { padding: 14px; border-bottom: 1px solid #334155; font-size: 15px; }
+
+/* Dynamic Operation Badges */
+.status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+.status-badge.active { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+.status-badge.maintenance { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+.status-badge.standby { background: rgba(234, 179, 8, 0.15); color: #facc15; }
+
+/* Management Form Container Card */
+.management-card {
+  background: var(--bg-card);
+  padding: 8px 16px; /* Let the section component handle main padding */
+}
+
+.management-card h3 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 20px;
+  color: var(--text-main);
+  border-bottom: 1px solid #334155;
+  padding-bottom: 12px;
+}
+
+/* Form structure constraints */
+.management-card form {
+  max-width: 500px; /* Keeps the form from looking stretched on giant screens */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Standardizing the dashboard selectors */
+.dashboard-select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #475569;
+  background-color: #0F172A;
+  color: var(--text-main);
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+/* Reusing your form inputs architecture */
+.management-card .form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #475569;
+  background-color: #0F172A;
+  color: var(--text-main);
+  border-radius: 6px;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.management-card .form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+/* Action submission button adaptation */
+.management-card .btn-login {
+  max-width: 200px; /* Restricts button size so it doesn't span across full width */
+  margin-top: 8px;
+}
+/* Inline Action Buttons inside standard layout row panels */
+.action-btn {
+  background: transparent;
+  border: 1px solid #475569;
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-right: 8px;
+  transition: all 0.2s;
+}
+.action-btn.edit:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(56, 189, 248, 0.05);
+}
+.action-btn.delete:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+/* Modal Core Architecture */
+/* Modal Core Architecture Container */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.75); 
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border: 1px solid #334155;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 540px;
+  max-height: 85vh; /* Prevents overflow off screen limits */
+  display: flex;
+  flex-direction: column; 
+  padding: 28px;
+  box-sizing: border-box;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 14px;
+  flex-shrink: 0; /* Keeps the header fixed at the top */
+}
+
+.modal-header h3 {
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+
+.close-modal-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.close-modal-btn:hover {
+  color: #ef4444; /* Glow red on hover action */
+}
+
+/* Internal Scroll View Boundaries */
+.modal-scroll-area {
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-right: 8px; /* Room for scrollbar track padding */
+}
+
+/* Custom theme scrollbar styling for dark-mode panels */
+.modal-scroll-area::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-scroll-area::-webkit-scrollbar-track {
+  background: #0f172a;
+  border-radius: 4px;
+}
+.modal-scroll-area::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+.modal-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  border-top: 1px solid #334155;
+  padding-top: 16px;
+  flex-shrink: 0; /* Keeps navigation anchored to modal footer base */
+}
+
+@keyframes modalFadeIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

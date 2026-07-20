@@ -1,5 +1,20 @@
 <?php
 
+// 1. Allow access from your Vite frontend development server URL
+header("Access-Control-Allow-Origin: http://localhost:5173");
+
+// 2. Allow JSON/Content-Type configurations inside body payloads
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+// 3. Allow standard HTTP operations needed for CRUD frameworks
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+
+// 4. Handle HTTP OPTIONS preflight request smoothly
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 header("Content-Type: application/json");
 
 require_once __DIR__ . "/../../config/database.php";
