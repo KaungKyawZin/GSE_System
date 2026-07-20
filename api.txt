@@ -23,7 +23,23 @@ response > {
 roles api
 get all role for admin role > http://localhost:80/api/roles/index.php?user_id=2
 get role data with role id > http://localhost:80/api/roles/show_roles.php?role_id=2
+create role > http://localhost:8000/api/roles/create_role.php
+body > {
+    "role_name": "test",
+    "description": "tester"
+    }
 
+update role > http://localhost:8000 /api/roles/update_role.php
+body > {   
+    "role_id" : 7,
+    "role_name": "testing",
+    "description": "tester"
+}
+
+delete role > http://localhost:8000 /api/roles/delete_role.php
+body > {
+    "role_id" : 7
+    }
 
 user api
 get all user for admin user > http://localhost:8000/api/users/index.php?user_id=2
