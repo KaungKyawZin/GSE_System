@@ -5,7 +5,7 @@ require_once __DIR__ . "/../../config/database.php";
 $user_id = $_GET["user_id"] ?? null;
 
 try {
-    $sql = "SELECT * FROM users ORDER BY user_id DESC";
+    $sql = "SELECT * FROM users ORDER BY user_id";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $users = $stmt->fetchAll();
