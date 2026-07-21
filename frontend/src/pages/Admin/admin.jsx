@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../App.css";
 import ManageUser from "./manageUser";
+import ManageRole from "./manageRole";
 //import CreateVehicle from "./CreateVehicle";
 //import SystemOverview from "./SystemOverview";
 
@@ -18,7 +19,7 @@ function AdminDashboard() {
 
       
         if (!userId || parseInt(roleId, 10) !== 1) {
-            localStorage.clear(); // Clear bad memory
+            localStorage.clear(); 
             navigate("/", { replace: true });
         }
     }, [navigate]);
@@ -36,10 +37,11 @@ function AdminDashboard() {
                 <div className="sidebar-menu">
                     <button className={activeTab === "overview" ? "active" : ""} onClick={() => setActiveTab("overview")}>📊 Overview</button>
                     <button className={activeTab === "users" ? "active" : ""} onClick={() => setActiveTab("users")}>👥 Users</button>
+                    <button className={activeTab === "roles" ? "active" : ""} onClick={() => setActiveTab("roles")}>👥 Manage Roles</button>
                     <button className={activeTab === "vehicles" ? "active" : ""} onClick={() => setActiveTab("vehicles")}>🚜 Vehicles</button>
                 </div>
                 
-                {/* Connected dynamic logout event hook */}
+             
                 <button className="btn-logout" onClick={handleLogout}>
                     🚪 Logout
                 </button>
@@ -66,6 +68,9 @@ function AdminDashboard() {
         {/* Users view triggers here */}
         {activeTab === "users" && (
             <ManageUser setApiMessage={setApiMessage} setApiError={setApiError} />
+        )}
+          {activeTab === "roles" && (
+            <ManageRole setApiMessage={setApiMessage} setApiError={setApiError} />
         )}
         
         {activeTab === "vehicles" && <div><h3>🚜 Vehicles Management</h3></div>}

@@ -249,7 +249,7 @@ body {
 }
 
 /* Sleek Inputs with Focus Transitions */
-.form-group input { 
+.form-group input,textarea,select { 
   width: 100%; 
   padding: 12px; 
   border: 1px solid #475569; 
@@ -338,8 +338,9 @@ body {
 .sidebar-menu {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   flex-grow: 1;
+  margin:10 px;
 }
 
 .sidebar-menu a {
@@ -354,6 +355,7 @@ body {
 .sidebar-menu a:hover, .sidebar-menu a.active {
   background-color: var(--bg-hover);
   color: var(--text-main);
+  border-radius: 20px;
 }
 
 .btn-logout {
@@ -625,7 +627,7 @@ body {
 
 .modal-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 12px;
   margin-top: 24px;
   border-top: 1px solid #334155;
