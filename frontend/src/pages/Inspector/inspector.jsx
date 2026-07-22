@@ -22,11 +22,9 @@ function AdminDashboard() {
         }
     }, []);
 
-    // Session log out wiping system tracking keys
-    const handleLogout = () => {
-        localStorage.removeItem("user_id");
-        localStorage.removeItem("username");
-        navigate("/");
+   const handleLogout = () => {
+        localStorage.clear(); 
+        navigate("/", { replace: true }); 
     };
 
     return (
