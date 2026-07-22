@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { FaBeer, FaRocket } from 'react-icons/fa'; 
-import { MdOutlineEmail } from 'react-icons/md';   
-
 
 function ManageUser({ setApiMessage, setApiError }) {
     const [users, setUsers] = useState([]);
@@ -214,7 +211,7 @@ function ManageUser({ setApiMessage, setApiError }) {
                 <div className="modal-overlay" onClick={closeModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>{editingUserId ? "Edit User Account" : "Add New User Account"}</h3>
+                            <h3>{editingUserId ?"✏️Edit User Account":"👤Add New User Account"}</h3>
                             <button className="close-modal-btn" onClick={closeModal}>&times;</button>
                         </div>
                         <div className="modal-scroll-area">
