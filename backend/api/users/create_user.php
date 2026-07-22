@@ -34,6 +34,26 @@ if (
     exit;
 }
 
+try{
+    $check_sql = "SELECT * FROM users WHERE username = :username";
+    $check_stmt = $pdo->prepare($check_sql);
+    $check_stmt->execute([
+        ":username" => $username
+    ]);
+    $existing_user = $check_stmt->fetch();
+
+    if ($existing_user) {
+        http_response_code(409);
+
+        echo json_encode([
+            "success" => false,
+            "message" => "Username already exists"
+        ]);
+
+        exit;
+    }
+
+
 $password_hash = password_hash(
     $password,
     PASSWORD_DEFAULT
@@ -77,3 +97,11 @@ echo json_encode([
     "message" => "User created successfully",
     "user_id" => $pdo->lastInsertId()
 ]);
+} catch (PDOException $e) {
+    http_response_code(500);
+
+    echo json_encode([
+        "success" => false,
+        "message" => $e->getMessage()
+    ]);
+}
