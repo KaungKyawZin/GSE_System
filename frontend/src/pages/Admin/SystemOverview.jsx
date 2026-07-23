@@ -10,7 +10,7 @@ function SystemOverview() {
         usersByRole: []
     });
 
-    // 2. AI Prediction State
+    
     const [aiPrediction, setAiPrediction] = useState({
         status: "Loading...",
         confidence: 0,
@@ -21,18 +21,15 @@ function SystemOverview() {
 
     const [loadingStats, setLoadingStats] = useState(true);
 
-    // 3. Fetch Overview Data and AI Predictions on Mount
+    
     useEffect(() => {
         fetchSystemOverviewData();
         fetchAiPrediction();
     }, []);
 
-    // API Handler: Fetch Users & Roles Aggregates
     const fetchSystemOverviewData = async () => {
         try {
             setLoadingStats(true);
-
-            // Parallel API execution for faster loading
             const [usersRes, rolesRes] = await Promise.all([
                 fetch("http://localhost:8000/api/users/get_users.php"),
                 fetch("http://localhost:8000/api/roles/get_roles.php")
@@ -102,7 +99,7 @@ function SystemOverview() {
         }
     };
 
-    // Calculate maximum count to normalize bar lengths dynamically
+
     const maxRoleCount = Math.max(...stats.usersByRole.map((r) => r.count), 1);
 
     return (
@@ -135,7 +132,6 @@ function SystemOverview() {
                 </div>
             </div>
 
-            {/* AI PREDICTION WIDGET */}
             <div className="ai-card">
                 <div className="ai-header">
                     <h3 style={{ margin: 0, fontSize: "1.15rem" }}>🤖 AI System Insight & Health Prediction</h3>
