@@ -1,14 +1,14 @@
 CREATE DATABASE IF NOT EXISTS gse_system;
 USE gse_system;
 
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
     role_name VARCHAR(50) NOT NULL UNIQUE,
     description VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     role_id INT NOT NULL,
     full_name VARCHAR(100),
@@ -22,7 +22,7 @@ CREATE TABLE users (
     FOREIGN KEY (role_id) REFERENCES roles(role_id)
 );
 
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
     notification_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     title VARCHAR(150),
@@ -33,7 +33,7 @@ CREATE TABLE notifications (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE activity_logs (
+CREATE TABLE IF NOT EXISTS activity_logs (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     activity VARCHAR(255),
@@ -43,13 +43,13 @@ CREATE TABLE activity_logs (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE vehicle_types (
+CREATE TABLE IF NOT EXISTS vehicle_types (
     vehicle_type_id INT AUTO_INCREMENT PRIMARY KEY,
     type_name VARCHAR(100) NOT NULL,
     description TEXT
 );
 
-CREATE TABLE vehicles (
+CREATE TABLE IF NOT EXISTS vehicles (
     vehicle_id INT AUTO_INCREMENT PRIMARY KEY,
     vehicle_type_id INT NOT NULL,
 
@@ -57,9 +57,13 @@ CREATE TABLE vehicles (
     registration_no VARCHAR(50),
     manufacturer VARCHAR(100),
     model VARCHAR(100),
+
+    vehicle_photo VARCHAR(255),
+
     year_manufactured YEAR,
 
     purchase_date DATE,
+
     status ENUM(
         'Available',
         'Assigned',
@@ -77,7 +81,7 @@ CREATE TABLE vehicles (
         REFERENCES vehicle_types(vehicle_type_id)
 );
 
-CREATE TABLE flights (
+CREATE TABLE IF NOT EXISTS flights (
     flight_id INT AUTO_INCREMENT PRIMARY KEY,
 
     flight_number VARCHAR(30) NOT NULL,
@@ -95,7 +99,7 @@ CREATE TABLE flights (
     ) DEFAULT 'Scheduled'
 );
 
-CREATE TABLE airport_gates (
+CREATE TABLE IF NOT EXISTS airport_gates (
     gate_id INT AUTO_INCREMENT PRIMARY KEY,
     gate_code VARCHAR(20) UNIQUE,
     terminal VARCHAR(50),
@@ -106,7 +110,7 @@ CREATE TABLE airport_gates (
     ) DEFAULT 'Available'
 );
 
-CREATE TABLE vehicle_assignments (
+CREATE TABLE IF NOT EXISTS vehicle_assignments (
     assignment_id INT AUTO_INCREMENT PRIMARY KEY,
 
     vehicle_id INT NOT NULL,
@@ -137,7 +141,7 @@ CREATE TABLE vehicle_assignments (
         REFERENCES airport_gates(gate_id)
 );
 
-CREATE TABLE inspections (
+CREATE TABLE IF NOT EXISTS inspections (
     inspection_id INT AUTO_INCREMENT PRIMARY KEY,
 
     vehicle_id INT NOT NULL,
@@ -160,14 +164,14 @@ CREATE TABLE inspections (
         REFERENCES users(user_id)
 );
 
-CREATE TABLE inspection_items (
+CREATE TABLE IF NOT EXISTS inspection_items (
     item_id INT AUTO_INCREMENT PRIMARY KEY,
 
     item_name VARCHAR(100),
     description TEXT
 );
 
-CREATE TABLE inspection_details (
+CREATE TABLE IF NOT EXISTS inspection_details (
     detail_id INT AUTO_INCREMENT PRIMARY KEY,
 
     inspection_id INT NOT NULL,
@@ -188,7 +192,7 @@ CREATE TABLE inspection_details (
         REFERENCES inspection_items(item_id)
 );
 
-CREATE TABLE maintenance_jobs (
+CREATE TABLE IF NOT EXISTS maintenance_jobs (
     maintenance_id INT AUTO_INCREMENT PRIMARY KEY,
 
     vehicle_id INT NOT NULL,
@@ -216,7 +220,7 @@ CREATE TABLE maintenance_jobs (
         REFERENCES users(user_id)
 );
 
-CREATE TABLE spare_parts (
+CREATE TABLE IF NOT EXISTS spare_parts (
     part_id INT AUTO_INCREMENT PRIMARY KEY,
 
     part_name VARCHAR(150),
@@ -230,7 +234,7 @@ CREATE TABLE spare_parts (
     supplier VARCHAR(150)
 );
 
-CREATE TABLE maintenance_parts_used (
+CREATE TABLE IF NOT EXISTS maintenance_parts_used (
     id INT AUTO_INCREMENT PRIMARY KEY,
 
     maintenance_id INT NOT NULL,
@@ -246,7 +250,7 @@ CREATE TABLE maintenance_parts_used (
         REFERENCES spare_parts(part_id)
 );
 
-CREATE TABLE ai_predictions (
+CREATE TABLE IF NOT EXISTS ai_predictions (
     prediction_id INT AUTO_INCREMENT PRIMARY KEY,
     vehicle_id INT NOT NULL,
     prediction_date DATETIME,
@@ -258,7 +262,7 @@ CREATE TABLE ai_predictions (
         REFERENCES vehicles(vehicle_id)
 );
 
-CREATE TABLE vehicle_logs (
+CREATE TABLE IF NOT EXISTS vehicle_logs (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
     vehicle_id INT NOT NULL,
     user_id INT,
