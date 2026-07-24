@@ -5,7 +5,7 @@ require_once __DIR__ . "/../../config/database.php";
 $user_id = $_GET["user_id"] ?? null;
 
 try {
-$sql = "select * from roles ORDER BY role_id DESC";
+$sql = "select * from roles ORDER BY role_id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $roles = $stmt->fetchAll();
