@@ -79,3 +79,70 @@ VALUES
     ('Inspector', 'Vehicle Inspection Officer'),
     ('Technician', 'Vehicle Maintenance Technician'),
     ('Driver', 'GSE Vehicle Driver');
+
+
+vehicles api
+    get vehicles > http://localhost:8000 /api/vehicles/get_vehicles.php
+    get vehicles by type > http://localhost:8000 /api/vehicles/get_vehicle_by_types.php?vehicle_type_id=1
+    get vehicle by vehicle id > http://localhost:8000 /api/vehicles/get_vehicle_by_id.php?vehicle_id=21
+
+    create vehicle > http://localhost:8000 /api/vehicles/create_vehicle.php
+    body{
+        {
+    "vehicle_type_id": 1,
+    "vehicle_code": "PBT-003",
+    "registration_no": "GSE-1021",
+    "manufacturer": "test",
+    "model": "TT612",
+    "vehicle_photo": "uploads/vehicles/pbt-003.jpg",
+    "year_manufactured": 2024,
+    "purchase_date": "2024-05-10",
+    "status": "Available",
+    "mileage": 0,
+    "engine_hours": 0
+}
+    }
+
+    update vehicle > http://localhost:8000 /api/vehicles/update_vehicle.php
+    body{
+        {
+    "vehicle_id" : 21,
+    "vehicle_type_id": 1,
+    "vehicle_code": "PBT-003",
+    "registration_no": "GSE-1021",
+    "manufacturer": "test",
+    "model": "TT612",
+    "vehicle_photo": "uploads/vehicles/pbt-003.jpg",
+    "year_manufactured": 2024,
+    "purchase_date": "2024-05-10",
+    "status": "Available",
+    "mileage": 0,
+    "engine_hours": 0
+}
+    }
+
+    delete vehicle > http://localhost:8000 /api/vehicles/delete_vehicle.php
+    body{
+        "vehicle_id" : 21
+    }
+
+    vehicle type api 
+    get vehicle type > http://localhost:8000 /api/vehicle_type/get_type.php
+
+    create vehicle type > http://localhost:8000 /api/vehicle_type/create_type.php
+    body {
+        "type_name" : "test",
+        "descriptin" : "test"
+    }
+
+    update vehicle type > http://localhost:8000 /api/vehicle_type/update_type.php
+    body {
+        "vehicle_type_id" : 1,
+        "type_name" : "test",
+        "descriptin" : "test"
+    }
+
+    delete vehicle type > http://localhost:8000 /api/vehicle_type/delete_type.php
+    body {
+        "vehicle_type_id" : 1
+    }
