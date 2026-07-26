@@ -209,19 +209,7 @@ html, body, #root {
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
 }
 
-.btn-login { 
-  width: 100%; 
-  padding: 12px; 
-  background-color: var(--primary); 
-  border: none; 
-  color: #0F172A; 
-  font-size: 16px; 
-  font-weight: 600;
-  border-radius: 6px; 
-  cursor: pointer; 
-  transition: background-color 0.2s, transform 0.1s;
-  margin-top: 10px;
-}
+
 
 .btn-login:hover { 
   background-color: #7DD3FC; 
@@ -429,6 +417,25 @@ html, body, #root {
 .section-title h3 { margin-top: 0; margin-bottom: 20px; }
 
 .responsive-table-wrapper { width: 100%; overflow-x: auto; }
+admin-table-extend { width: 100%; border-collapse: collapse; text-align: left; }
+.admin-table-extend th {
+    padding: 10px 16px;
+    border-bottom: 2px solid #334155;
+    color: var(--text-muted);
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.admin-table-extend td {
+    padding: 16px 16px;
+    border-bottom: 1px solid #1e293b;
+    font-size: 14px;
+    color: var(--text-main);
+}
+
+
+
 .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
 .admin-table th {
     padding: 12px 16px;

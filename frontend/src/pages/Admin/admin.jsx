@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../App.css";
+import SystemOverview from "./SystemOverview";
 import ManageUser from "./manageUser";
 import ManageRole from "./manageRole";
-import SystemOverview from "./SystemOverview";
+import ManageVehicleType from "./manageVehicleType";
+import ManageVehicle from "./manageVehicle";
+import ManageGate from "./manageAirportGates";
+import ManageFlight from "./manageFlights";
+import ManageSparePart from "./manageSpareParts";
+import ManageUsedPart from "./ManageUsedParts";
 
 function AdminDashboard() {
     const navigate = useNavigate();
@@ -59,7 +65,13 @@ function AdminDashboard() {
                     <button className={activeTab === "SystemOverview" ? "active" : ""} onClick={() => setActiveTab("SystemOverview")}>📊 System Overview</button>
                     <button className={activeTab === "users" ? "active" : ""} onClick={() => setActiveTab("users")}>👥 Manage Users</button>
                     <button className={activeTab === "roles" ? "active" : ""} onClick={() => setActiveTab("roles")}>🛡️ Manage Roles</button>
+                    <button className={activeTab === "vehicleTypes" ? "active" : ""} onClick={() => setActiveTab("vehicleTypes")}>🛻 Manage Vehicle Types</button>
                     <button className={activeTab === "vehicles" ? "active" : ""} onClick={() => setActiveTab("vehicles")}>🚜 Manage Vehicles</button>
+                  <button className={activeTab === "gates" ? "active" : ""} onClick={() => setActiveTab("gates")}>🚧 Manage Gates</button>
+                  <button className={activeTab === "flights" ? "active" : ""} onClick={() => setActiveTab("flights")}> ✈️ Manage Flight</button>
+                  <button className={activeTab === "spareParts" ? "active" : ""} onClick={() => setActiveTab("spareParts")}>⚙️ Manage Spare Parts</button>
+                  <button className={activeTab === "UsedParts" ? "active" : ""} onClick={() => setActiveTab("UsedParts")}> ♻️ Manage Used Parts</button>
+               
                 </div>
                 
                 <button className="btn-logout" onClick={handleLogout}>
@@ -100,8 +112,25 @@ function AdminDashboard() {
                     {activeTab === "roles" && (
                         <ManageRole setApiMessage={showMessage} setApiError={showError} />
                     )}
-                    
-                    {activeTab === "vehicles" && <div><h3>🚜 Vehicles Management</h3></div>}
+                       {activeTab === "vehicleTypes" && (
+                        <ManageVehicleType setApiMessage={showMessage} setApiError={showError} />
+                    )}
+                 
+                    {activeTab === "vehicles" && (
+                        <ManageVehicle setApiMessage={showMessage} setApiError={showError} />
+                    )}
+                    {activeTab === "gates" && (
+                        <ManageGate setApiMessage={showMessage} setApiError={showError} />
+                    )}
+                     {activeTab === "flights" && (
+                        <ManageFlight setApiMessage={showMessage} setApiError={showError} />
+                    )} 
+                     {activeTab === "spareParts" && (
+                        <ManageSparePart setApiMessage={showMessage} setApiError={showError} />
+                    )}
+                     {activeTab === "UsedParts" && (
+                        <ManageUsedPart setApiMessage={showMessage} setApiError={showError} />
+                    )} 
                 </div>
             </main>
         </div>
