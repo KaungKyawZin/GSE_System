@@ -878,3 +878,138 @@ admin-table-extend { width: 100%; border-collapse: collapse; text-align: left; }
   border: 1px solid rgba(239, 68, 68, 0.3);
   color: #f87171;
 }
+
+/* Container positioning */
+.img-hover-container {
+  position: relative;
+  display: inline-block;
+}
+
+.large-hover-preview {
+  display: none;
+  position: absolute;
+  top: -50px;
+  left: 60px;
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #fff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+/* Show preview when hovering over the container */
+.img-hover-container:hover .large-hover-preview {
+  display: block;
+}
+
+/* Container wrap - prevents breaking layout bounds */
+.responsive-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: var(--bg-card, #1f2937);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Alignments */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+/* Truncation for text-heavy columns */
+.truncate-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vehicle-code-text {
+  color: #60a5fa;
+  font-family: monospace;
+  font-size: 0.88rem;
+}
+
+.num-cell {
+  font-family: monospace;
+  font-size: 0.83rem;
+  color: #cbd5e1;
+}
+
+/* Compact Image Thumbnail & Hover Preview */
+.compact-thumb {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #4b5563;
+  cursor: pointer;
+}
+
+.no-photo-badge {
+  font-size: 0.7rem;
+  color: #6b7280;
+  background: #374151;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.img-hover-container {
+  position: relative;
+  display: inline-block;
+}
+
+.large-hover-preview {
+  display: none;
+  position: absolute;
+  top: -40px;
+  left: 48px;
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #4b5563;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.img-hover-container:hover .large-hover-preview {
+  display: block;
+}
+
+/* Status Badges */
+.status-pill {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.status-pill.available { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+.status-pill.assigned { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+.status-pill.maintenance { background: rgba(234, 179, 8, 0.15); color: #facc15; }
+.status-pill.inspection { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+.status-pill.out-of-service { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+/* Action Button Group */
+.action-btn-group {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.action-btn.edit-sm,
+.action-btn.delete-sm {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  background: #374151;
+  transition: background 0.2s;
+}
+
+.action-btn.edit-sm:hover { background: #1e3a8a; }
+.action-btn.delete-sm:hover { background: #991b1b; }

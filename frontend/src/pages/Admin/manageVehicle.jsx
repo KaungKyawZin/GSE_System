@@ -3,27 +3,33 @@ import React, { useState, useEffect } from "react";
 function ManageVehicles({ setApiMessage, setApiError }) {
     const [vehicles, setVehicles] = useState([]);
     const [vehicleTypes, setVehicleTypes] = useState([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingVehicleId, setEditingVehicleId] = useState(null);
 
-    // Photo State Declarations
+    // Modal Control States
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+    // Selected Vehicle Data States
+    const [selectedDetailVehicle, setSelectedDetailVehicle] = useState(null);
+    const [editingVehicleId, setEditingVehicleId] = useState(null);
+    const [vehicleToDelete, setVehicleToDelete] = useState(null);
+
+    // Photo Upload States
     const [photoFile, setPhotoFile] = useState(null);
     const [photoPreview, setPhotoPreview] = useState("");
 
-    // In-Modal Alert Notification States (Disappear after 2 seconds)
+    // In-Modal Alert Notification States
     const [formMessage, setFormMessage] = useState("");
     const [formError, setFormError] = useState("");
 
-    // Custom Delete Confirmation Modal State
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [vehicleToDelete, setVehicleToDelete] = useState(null);
-
+    // Form State
     const [form, setForm] = useState({
         vehicle_type_id: "",
         vehicle_code: "",
         registration_no: "",
         manufacturer: "",
         model: "",
+        vehicle_photo: "",
         year_manufactured: "",
         purchase_date: "",
         status: "Available",
@@ -36,23 +42,23 @@ function ManageVehicles({ setApiMessage, setApiError }) {
         fetchVehicleTypes();
     }, []);
 
-    // Helper functions for floating alerts inside modal
+    // Helper functions for alerts inside form modal
     const showModalError = (err) => {
         setFormError(err);
-        setTimeout(() => setFormError(""), 2000);
+        setTimeout(() => setFormError(""), 3000);
     };
 
     const showModalMessage = (msg) => {
         setFormMessage(msg);
-        setTimeout(() => setFormMessage(""), 2000);
+        setTimeout(() => setFormMessage(""), 3000);
     };
 
-    // Handle file selection and preview generation
+    // Handle image file selection
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setPhotoFile(file);
-            setPhotoPreview(URL.createObjectURL(file)); // Immediate preview URL
+            setPhotoPreview(URL.createObjectURL(file));
         }
     };
 
@@ -69,7 +75,7 @@ function ManageVehicles({ setApiMessage, setApiError }) {
         }
     };
 
-    // 2. Fetch Vehicle Types for Form Dropdown
+    // 2. Fetch Vehicle Types
     const fetchVehicleTypes = async () => {
         try {
             const response = await fetch("http://localhost:8000/api/vehicle_type/get_type.php");
@@ -82,15 +88,25 @@ function ManageVehicles({ setApiMessage, setApiError }) {
         }
     };
 
-    // 3. Open Edit Modal
+    // 3. Open Details View (Full 10 Columns / Specs)
+    const handleViewDetail = (v) => {
+        setSelectedDetailVehicle(v);
+        setIsDetailModalOpen(true);
+    };
+
+    const closeDetailModal = () => {
+        setIsDetailModalOpen(false);
+        setSelectedDetailVehicle(null);
+    };
+
+    // 4. Open Edit Form Modal
     const handleEditClick = (v) => {
         setFormError("");
         setFormMessage("");
         setEditingVehicleId(v.vehicle_id);
 
-        // Reset file upload state & load existing image preview if available
         setPhotoFile(null);
-        setPhotoPreview(v.vehicle_photo ? `http://localhost:8000/${v.vehicle_photo}` : "");
+        setPhotoPreview("");
 
         setForm({
             vehicle_type_id: v.vehicle_type_id || "",
@@ -98,22 +114,52 @@ function ManageVehicles({ setApiMessage, setApiError }) {
             registration_no: v.registration_no || "",
             manufacturer: v.manufacturer || "",
             model: v.model || "",
+            vehicle_photo: v.vehicle_photo || "",
             year_manufactured: v.year_manufactured || "",
             purchase_date: v.purchase_date || "",
             status: v.status || "Available",
             mileage: v.mileage || "",
             engine_hours: v.engine_hours || ""
         });
-        setIsModalOpen(true);
+        setIsEditModalOpen(true);
     };
 
-    // 4. Prompt Custom Delete Modal
+    const openAddModal = () => {
+        setEditingVehicleId(null);
+        setFormError("");
+        setFormMessage("");
+        setPhotoFile(null);
+        setPhotoPreview("");
+        setForm({
+            vehicle_type_id: "",
+            vehicle_code: "",
+            registration_no: "",
+            manufacturer: "",
+            model: "",
+            vehicle_photo: "",
+            year_manufactured: "",
+            purchase_date: "",
+            status: "Available",
+            mileage: "",
+            engine_hours: ""
+        });
+        setIsEditModalOpen(true);
+    };
+
+    const closeEditModal = () => {
+        setIsEditModalOpen(false);
+        setFormError("");
+        setFormMessage("");
+        setPhotoFile(null);
+        setPhotoPreview("");
+    };
+
+    // 5. Prompt & Confirm Delete
     const promptDeleteVehicle = (v) => {
         setVehicleToDelete(v);
         setDeleteModalOpen(true);
     };
 
-    // 5. Execute Vehicle Deletion
     const confirmDeleteVehicle = async () => {
         if (!vehicleToDelete) return;
 
@@ -141,7 +187,7 @@ function ManageVehicles({ setApiMessage, setApiError }) {
         }
     };
 
-    // 6. Handle Form Submit (Create / Update using FormData)
+    // 6. Handle Form Submit (Create / Update)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFormError("");
@@ -152,7 +198,6 @@ function ManageVehicles({ setApiMessage, setApiError }) {
             ? "http://localhost:8000/api/vehicles/update_vehicle.php"
             : "http://localhost:8000/api/vehicles/create_vehicle.php";
 
-        // Construct FormData payload for file uploads
         const formData = new FormData();
         if (isEditing) {
             formData.append("vehicle_id", editingVehicleId);
@@ -169,9 +214,8 @@ function ManageVehicles({ setApiMessage, setApiError }) {
         formData.append("mileage", form.mileage || "");
         formData.append("engine_hours", form.engine_hours || "");
 
-        // Append photo file if user uploaded a new one
         if (photoFile) {
-            formData.append("vehicle_photo", photoFile);
+            formData.append("vehicle_photo_file", photoFile);
         }
 
         try {
@@ -183,114 +227,118 @@ function ManageVehicles({ setApiMessage, setApiError }) {
             const result = await response.json();
 
             if (result.success) {
-                const successMsg = result.message || (isEditing ? "Vehicle record updated!" : "New vehicle added successfully!");
+                const successMsg = result.message || (isEditing ? "Vehicle updated!" : "Vehicle created!");
                 showModalMessage(successMsg);
                 if (setApiMessage) setApiMessage(successMsg);
 
                 setTimeout(() => {
-                    closeModal();
+                    closeEditModal();
                     fetchVehicles();
                 }, 1200);
             } else {
-                const errorMsg = result.message || "Failed to save vehicle profile.";
-                showModalError(errorMsg);
+                showModalError(result.message || "Failed to save vehicle.");
             }
         } catch (error) {
             showModalError("Server communication error.");
         }
     };
 
-    const openAddModal = () => {
-        setEditingVehicleId(null);
-        setFormError("");
-        setFormMessage("");
-        setPhotoFile(null);
-        setPhotoPreview("");
-        setForm({
-            vehicle_type_id: "",
-            vehicle_code: "",
-            registration_no: "",
-            manufacturer: "",
-            model: "",
-            year_manufactured: "",
-            purchase_date: "",
-            status: "Available",
-            mileage: "",
-            engine_hours: ""
-        });
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setFormError("");
-        setFormMessage("");
-        setPhotoFile(null);
-        setPhotoPreview("");
+    const getPhotoSrc = () => {
+        if (photoPreview) return photoPreview;
+        if (form.vehicle_photo) return `http://localhost:8000/${form.vehicle_photo}`;
+        return null;
     };
 
     return (
         <div className="management-card">
             <div className="content-header">
                 <h3>Fleet Vehicles</h3>
-                <button className="btn-login" onClick={openAddModal}>
+                <button className="btn-login" style={{ width: "auto" }} onClick={openAddModal}>
                     ➕ Add New Vehicle
                 </button>
             </div>
 
-            <div className="responsive-table-wrapper">
-                <table className="admin-table-extend">
+         
+            <div className="responsive- wrapper">
+                <table className="admin-table">
+                    <colgroup>
+                        <col style={{ width: "80px" }} />  
+                        <col style={{ width: "220px" }} /> 
+                        <col style={{ width: "120px" }} />
+                        <col style={{ width: "200px" }} /> 
+                    </colgroup>
                     <thead>
                         <tr>
-                            <th>Photo</th>
-                            <th>Code</th>
-                            <th>Reg. No</th>
-                            <th>Type</th>
-                            <th>Make & Model</th>
-                            <th>Year</th>
-                            <th>Status</th>
-                            <th>Mileage (km)</th>
-                            <th>Engine Hrs</th>
-                            <th>Actions</th>
+                            <th className="text-center">Photo</th>
+                            <th>Vehicle Code / Reg</th>
+                            <th className="text-center">Status</th>
+                            <th className="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {vehicles.length === 0 ? (
                             <tr>
-                                <td colSpan="10" style={{ textAlign: "center", color: "var(--text-muted)" }}>
+                                <td colSpan="4" style={{ textAlign: "center", color: "var(--text-muted)" }}>
                                     No vehicles found.
                                 </td>
                             </tr>
                         ) : (
                             vehicles.map((v) => (
                                 <tr key={v.vehicle_id}>
-                                    <td>
+                                    <td className="text-center">
                                         {v.vehicle_photo ? (
-                                            <img
-                                                src={`http://localhost:8000/${v.vehicle_photo}`}
-                                                alt="Vehicle"
-                                                style={{
-                                                    width: "48px",
-                                                    height: "48px",
-                                                    objectFit: "cover",
-                                                    borderRadius: "6px"
-                                                }}
-                                            />
+                                            <div className="img-hover-container">
+                                                <img
+                                                    src={`http://localhost:8000/${v.vehicle_photo}`}
+                                                    alt="Vehicle"
+                                                    className="compact-thumb"
+                                                />
+                                                <img
+                                                    src={`http://localhost:8000/${v.vehicle_photo}`}
+                                                    alt="Vehicle Preview"
+                                                    className="large-hover-preview"
+                                                />
+                                            </div>
                                         ) : (
-                                            <span style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>No Photo</span>
+                                            <span className="no-photo-badge">No Image</span>
                                         )}
                                     </td>
-                                    <td><strong>{v.vehicle_code}</strong></td>
-                                    <td>{v.registration_no || "-"}</td>
-                                    <td>{v.type_name || v.vehicle_type_id}</td>
-                                    <td>{v.manufacturer} {v.model}</td>
-                                    <td>{v.year_manufactured || "-"}</td>
-                                    <td>{v.status}</td>
-                                    <td>{v.mileage ? parseFloat(v.mileage).toLocaleString() : "0"}</td>
-                                    <td>{v.engine_hours ? parseFloat(v.engine_hours).toLocaleString() : "0"}</td>
                                     <td>
-                                        <button className="action-btn edit" onClick={() => handleEditClick(v)}>✏️ Edit</button>
-                                        <button className="action-btn delete" onClick={() => promptDeleteVehicle(v)}>🗑️ Delete</button>
+                                        <strong className="vehicle-code-text">{v.vehicle_code}</strong>
+                                        <div style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
+                                            Reg: {v.registration_no || "-"}
+                                        </div>
+                                    </td>
+                                    <td className="text-center">
+                                        <span className={`status-pill ${v.status ? v.status.toLowerCase().replace(/\s+/g, '-') : 'available'}`}>
+                                            {v.status}
+                                        </span>
+                                    </td>
+                                    <td className="text-center">
+                                        <div className="action-btn-group" style={{ justifyContent: "center", gap: "6px" }}>
+                                            <button 
+                                                className="action-btn edit-sm" 
+                                                style={{ background: "rgba(56, 189, 248, 0.15)", color: "var(--primary)", borderColor: "rgba(56, 189, 248, 0.3)" }}
+                                                onClick={() => handleViewDetail(v)} 
+                                                title="View Full Details"
+                                            >
+                                                👁️ Detail
+                                            </button>                                         
+                                            <button 
+                                                className="action-btn edit-sm" 
+                                                onClick={() => handleEditClick(v)} 
+                                                title="Edit Record"
+                                            >
+                                                ✏️ Edit
+                                            </button>
+                                            <button 
+                                                className="action-btn delete-sm" 
+                                                onClick={() => promptDeleteVehicle(v)} 
+                                                title="Delete Record"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))
@@ -298,16 +346,131 @@ function ManageVehicles({ setApiMessage, setApiError }) {
                     </tbody>
                 </table>
             </div>
-
-            {isModalOpen && (
-                <div className="modal-overlay" onClick={closeModal}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h3>{editingVehicleId ? "✏️ Edit Vehicle Record" : "🚜 Register New Vehicle"}</h3>
-                            <button className="close-modal-btn" onClick={closeModal}>&times;</button>
+            {isDetailModalOpen && selectedDetailVehicle && (
+                <div className="modal-overlay" onClick={closeDetailModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: "600px" }}>
+                        <div className="modal-header" style={{ borderBottom: "1px solid #334155", paddingBottom: "12px" }}>
+                            <button 
+                                type="button" 
+                                onClick={closeDetailModal}
+                                style={{
+                                    background: "transparent",
+                                    border: "none",
+                                    color: "var(--primary)",
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "6px",
+                                    fontSize: "14px",
+                                    fontWeight: "600",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                ← Back to Vehicle List
+                            </button>
+                            <button className="close-modal-btn" onClick={closeDetailModal}>&times;</button>
                         </div>
 
-                        {/* POP-UP ALERTS INSIDE MODAL */}
+                        <div className="modal-scroll-area" style={{ paddingTop: "16px" }}>
+                            <div style={{ display: "flex", gap: "18px", alignItems: "center", marginBottom: "20px" }}>
+                                {selectedDetailVehicle.vehicle_photo ? (
+                                    <img 
+                                        src={`http://localhost:8000/${selectedDetailVehicle.vehicle_photo}`} 
+                                        alt="Vehicle" 
+                                        style={{ width: "100px", height: "100px", borderRadius: "8px", objectFit: "cover", border: "1px solid #334155" }} 
+                                    />
+                                ) : (
+                                    <div style={{ width: "100px", height: "100px", borderRadius: "8px", background: "#1e293b", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", border: "1px dashed #334155" }}>
+                                        No Photo
+                                    </div>
+                                )}
+                                <div>
+                                    <h2 style={{ margin: 0, color: "var(--text-main)", fontSize: "20px" }}>
+                                        {selectedDetailVehicle.vehicle_code}
+                                    </h2>
+                                    <div style={{ marginTop: "6px" }}>
+                                        <span className={`status-pill ${selectedDetailVehicle.status ? selectedDetailVehicle.status.toLowerCase().replace(/\s+/g, '-') : 'available'}`}>
+                                            {selectedDetailVehicle.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Full 10 Specifications Grid */}
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", background: "rgba(15, 23, 42, 0.4)", padding: "16px", borderRadius: "8px", border: "1px solid #334155" }}>
+                                <div>
+                                    <label style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase" }}>Registration Number</label>
+                                    <p style={{ margin: "2px 0 0", color: "var(--text-main)", fontWeight: "500" }}>{selectedDetailVehicle.registration_no || "-"}</p>
+                                </div>
+
+                                <div>
+                                    <label style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase" }}>Vehicle Type</label>
+                                    <p style={{ margin: "2px 0 0", color: "var(--text-main)", fontWeight: "500" }}>{selectedDetailVehicle.type_name || selectedDetailVehicle.vehicle_type_id || "-"}</p>
+                                </div>
+
+                                <div>
+                                    <label style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase" }}>Manufacturer</label>
+                                    <p style={{ margin: "2px 0 0", color: "var(--text-main)", fontWeight: "500" }}>{selectedDetailVehicle.manufacturer || "-"}</p>
+                                </div>
+
+                                <div>
+                                    <label style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase" }}>Model</label>
+                                    <p style={{ margin: "2px 0 0", color: "var(--text-main)", fontWeight: "500" }}>{selectedDetailVehicle.model || "-"}</p>
+                                </div>
+
+                                <div>
+                                    <label style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase" }}>Year Manufactured</label>
+                                    <p style={{ margin: "2px 0 0", color: "var(--text-main)", fontWeight: "500" }}>{selectedDetailVehicle.year_manufactured || "-"}</p>
+                                </div>
+
+                                <div>
+                                    <label style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase" }}>Purchase Date</label>
+                                    <p style={{ margin: "2px 0 0", color: "var(--text-main)", fontWeight: "500" }}>{selectedDetailVehicle.purchase_date || "-"}</p>
+                                </div>
+
+                                <div>
+                                    <label style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase" }}>Current Mileage</label>
+                                    <p style={{ margin: "2px 0 0", color: "var(--text-main)", fontWeight: "500" }}>
+                                        {selectedDetailVehicle.mileage ? `${parseFloat(selectedDetailVehicle.mileage).toLocaleString()} km` : "0 km"}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <label style={{ fontSize: "11px", color: "var(--text-muted)", textTransform: "uppercase" }}>Engine Hours</label>
+                                    <p style={{ margin: "2px 0 0", color: "var(--text-main)", fontWeight: "500" }}>
+                                        {selectedDetailVehicle.engine_hours ? `${parseFloat(selectedDetailVehicle.engine_hours).toLocaleString()} hrs` : "0 hrs"}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="modal-actions" style={{ marginTop: "20px", display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                                <button 
+                                    className="action-btn edit-sm" 
+                                    style={{ padding: "8px 16px" }}
+                                    onClick={() => {
+                                        closeDetailModal();
+                                        handleEditClick(selectedDetailVehicle);
+                                    }}
+                                >
+                                    ✏️ Switch to Edit Mode
+                                </button>
+                                <button className="btn-logout" style={{ margin: 0, padding: "8px 16px" }} onClick={closeDetailModal}>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 2. EDIT / CREATE FORM MODAL */}
+            {isEditModalOpen && (
+                <div className="modal-overlay" onClick={closeEditModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3>{editingVehicleId ? `✏️ Edit Vehicle: ${form.vehicle_code}` : "🚜 Register New Vehicle"}</h3>
+                            <button className="close-modal-btn" onClick={closeEditModal}>&times;</button>
+                        </div>
+
                         {formMessage && (
                             <div className="modal-top-alert success">
                                 <span>✓ {formMessage}</span>
@@ -359,7 +522,6 @@ function ManageVehicles({ setApiMessage, setApiError }) {
                                     />
                                 </div>
 
-                                {/* VEHICLE PHOTO UPLOAD FIELD */}
                                 <div className="form-group">
                                     <label>Vehicle Photo</label>
                                     <input
@@ -369,20 +531,20 @@ function ManageVehicles({ setApiMessage, setApiError }) {
                                         style={{ padding: "8px 0" }}
                                     />
 
-                                    {/* PHOTO PREVIEW */}
-                                    {photoPreview && (
+                                    {getPhotoSrc() && (
                                         <div style={{ marginTop: "10px", textAlign: "center" }}>
                                             <img
-                                                src={photoPreview}
+                                                src={getPhotoSrc()}
                                                 alt="Vehicle Preview"
                                                 style={{
-                                                    width: "100%",
-                                                    maxHeight: "180px",
+                                                    width: "120px",
+                                                    height: "120px",
                                                     objectFit: "cover",
                                                     borderRadius: "8px",
-                                                    border: "1px solid var(--border-color, #334155)"
+                                                    border: "1px solid #374151"
                                                 }}
                                             />
+                                            <br />
                                             <button
                                                 type="button"
                                                 style={{
@@ -396,9 +558,10 @@ function ManageVehicles({ setApiMessage, setApiError }) {
                                                 onClick={() => {
                                                     setPhotoFile(null);
                                                     setPhotoPreview("");
+                                                    setForm({ ...form, vehicle_photo: "" });
                                                 }}
                                             >
-                                                ✖ Remove Selected Photo
+                                                ✖ Remove Photo
                                             </button>
                                         </div>
                                     )}
@@ -484,7 +647,7 @@ function ManageVehicles({ setApiMessage, setApiError }) {
                                 </div>
 
                                 <div className="modal-actions">
-                                    <button type="button" className="btn-logout" style={{ margin: 0, padding: "10px 20px" }} onClick={closeModal}>
+                                    <button type="button" className="btn-logout" style={{ margin: 0, padding: "10px 20px" }} onClick={closeEditModal}>
                                         Cancel
                                     </button>
                                     <button type="submit" className="btn-login" style={{ width: "auto", margin: 0, padding: "10px 20px" }}>
@@ -497,7 +660,7 @@ function ManageVehicles({ setApiMessage, setApiError }) {
                 </div>
             )}
 
-            {/* CUSTOM DELETE CONFIRMATION MODAL */}
+            {/* 3. DELETE CONFIRMATION MODAL */}
             {deleteModalOpen && (
                 <div className="modal-overlay" onClick={() => setDeleteModalOpen(false)}>
                     <div className="custom-confirm-card" onClick={(e) => e.stopPropagation()}>
