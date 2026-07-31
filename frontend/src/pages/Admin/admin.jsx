@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../App.css";
+
 import SystemOverview from "./SystemOverview";
 import ManageUser from "./ManageUser";
 import ManageRole from "./ManageRole";
@@ -33,12 +34,12 @@ function AdminDashboard() {
     });
 
     useEffect(() => {
-        // Changed from localStorage to sessionStorage
+        // Retrieve credentials from sessionStorage
         const userId = sessionStorage.getItem("user_id");
         const roleId = sessionStorage.getItem("role_id");
         const username = sessionStorage.getItem("username");
 
-        // Redirects to Login if a new tab is opened without an active tab session
+        // Redirect to Login if no active session or not Admin
         if (!userId || parseInt(roleId, 10) !== 1) {
             sessionStorage.clear(); 
             navigate("/", { replace: true });
@@ -57,6 +58,7 @@ function AdminDashboard() {
 
     return (
         <div className="admin-container">
+            {/* Sidebar Left */}
             <aside className="admin-sidebar">
                 <div className="sidebar-header">
                     <h3>🛠️ GSE Smart System</h3>
@@ -67,11 +69,10 @@ function AdminDashboard() {
                     <button className={activeTab === "roles" ? "active" : ""} onClick={() => setActiveTab("roles")}>🛡️ Manage Roles</button>
                     <button className={activeTab === "vehicleTypes" ? "active" : ""} onClick={() => setActiveTab("vehicleTypes")}>🛻 Manage Vehicle Types</button>
                     <button className={activeTab === "vehicles" ? "active" : ""} onClick={() => setActiveTab("vehicles")}>🚜 Manage Vehicles</button>
-                  <button className={activeTab === "gates" ? "active" : ""} onClick={() => setActiveTab("gates")}>🚧 Manage Gates</button>
-                  <button className={activeTab === "flights" ? "active" : ""} onClick={() => setActiveTab("flights")}> ✈️ Manage Flight</button>
-                  <button className={activeTab === "spareParts" ? "active" : ""} onClick={() => setActiveTab("spareParts")}>⚙️ Manage Spare Parts</button>
-                  <button className={activeTab === "UsedParts" ? "active" : ""} onClick={() => setActiveTab("UsedParts")}> ♻️ Manage Used Parts</button>
-               
+                    <button className={activeTab === "gates" ? "active" : ""} onClick={() => setActiveTab("gates")}>🚧 Manage Gates</button>
+                    <button className={activeTab === "flights" ? "active" : ""} onClick={() => setActiveTab("flights")}>✈️ Manage Flights</button>
+                    <button className={activeTab === "spareParts" ? "active" : ""} onClick={() => setActiveTab("spareParts")}>⚙️ Manage Spare Parts</button>
+                    <button className={activeTab === "UsedParts" ? "active" : ""} onClick={() => setActiveTab("UsedParts")}>♻️ Manage Used Parts</button>
                 </div>
                 
                 <button className="btn-logout" onClick={handleLogout}>
@@ -79,6 +80,7 @@ function AdminDashboard() {
                 </button>
             </aside>
             
+            {/* Main Content Area */}
             <main className="admin-content">
                 <header className="content-header">
                     <div>
@@ -88,18 +90,20 @@ function AdminDashboard() {
 
                     <div className="user-profile-badge">
                         <div className="user-avatar">
-                            {currentUser.username.charAt(0).toUpperCase()}
+                            {(currentUser.username || "A").charAt(0).toUpperCase()}
                         </div>
                         <div className="user-info">
-                            <div className="user-name">{currentUser.username}</div>
+                            <div className="user-name">{currentUser.username || "Admin"}</div>
                             <div className="user-role">{currentUser.roleName}</div>
                         </div>
                     </div>
                 </header>
 
+                {/* Dashboard Alerts */}
                 {apiMessage && <div className="dashboard-alert success">{apiMessage}</div>}
                 {apiError && <div className="dashboard-alert error">{apiError}</div>}
 
+                {/* Tab Views */}
                 <div className="table-section">
                     {activeTab === "SystemOverview" && (
                         <SystemOverview setApiMessage={showMessage} setApiError={showError}/>
@@ -112,23 +116,28 @@ function AdminDashboard() {
                     {activeTab === "roles" && (
                         <ManageRole setApiMessage={showMessage} setApiError={showError} />
                     )}
-                       {activeTab === "vehicleTypes" && (
+
+                    {activeTab === "vehicleTypes" && (
                         <ManageVehicleType setApiMessage={showMessage} setApiError={showError} />
                     )}
-                 
+
                     {activeTab === "vehicles" && (
                         <ManageVehicle setApiMessage={showMessage} setApiError={showError} />
                     )}
+
                     {activeTab === "gates" && (
                         <ManageGate setApiMessage={showMessage} setApiError={showError} />
                     )}
-                     {activeTab === "flights" && (
+
+                    {activeTab === "flights" && (
                         <ManageFlight setApiMessage={showMessage} setApiError={showError} />
                     )} 
-                     {activeTab === "spareParts" && (
+
+                    {activeTab === "spareParts" && (
                         <ManageSparePart setApiMessage={showMessage} setApiError={showError} />
                     )}
-                     {activeTab === "UsedParts" && (
+
+                    {activeTab === "UsedParts" && (
                         <ManageUsedPart setApiMessage={showMessage} setApiError={showError} />
                     )} 
                 </div>

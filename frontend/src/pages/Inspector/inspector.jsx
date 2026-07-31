@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../App.css";
-import SystemOverview from "./SystemOverview.jsx";
-//import ManageUser from "./manageUser";
-//import ManageRole from "./manageRole";
-//import ManageVehicleType from "./manageVehicleType";
-//import ManageVehicle from "./manageVehicle";
+
+import SystemOverview from "./SystemOverview";
+//import ManageVehicle from "./ManageVehicle";
 //import ManageGate from "./manageAirportGates";
 //import ManageFlight from "./manageFlights";
-//import ManageSparePart from "./manageSpareParts";
-//import ManageUsedPart from "./ManageUsedParts";
 
 function InspectorDashboard() {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState("SystemOverview");
+    const [activeTab, setActiveTab] = useState("overview");
     const [apiMessage, setApiMessageState] = useState("");
     const [apiError, setApiErrorState] = useState("");
 
@@ -29,75 +25,110 @@ function InspectorDashboard() {
 
     const [currentUser, setCurrentUser] = useState({
         username: "",
-        roleName: "Administrator"
+        roleName: "Inspector"
     });
 
     useEffect(() => {
-        // Changed from localStorage to sessionStorage
         const userId = sessionStorage.getItem("user_id");
         const roleId = sessionStorage.getItem("role_id");
         const username = sessionStorage.getItem("username");
 
-        // Redirects to Login if a new tab is opened without an active tab session
-        if (!userId || parseInt(roleId, 10) !== 1) {
-            sessionStorage.clear(); 
+        
+        if (!userId || parseInt(roleId, 10) !== 4) {
+            sessionStorage.clear();
             navigate("/", { replace: true });
         } else {
             setCurrentUser({
-                username: username || "Admin",
-                roleName: "Administrator"
+                username: username || "Inspector",
+                roleName: "Inspector"
             });
         }
     }, [navigate]);
 
     const handleLogout = () => {
-        sessionStorage.clear(); 
-        navigate("/", { replace: true }); 
+        sessionStorage.clear();
+        navigate("/", { replace: true });
     };
 
     return (
         <div className="admin-container">
+            
             <aside className="admin-sidebar">
                 <div className="sidebar-header">
-                    <h3>🛠️ GSE Smart System</h3>
+                    <h3>🔍 GSE Smart System</h3>
                 </div>
                 <div className="sidebar-menu">
-                    <button className={activeTab === "SystemOverview" ? "active" : ""} onClick={() => setActiveTab("SystemOverview")}>📊 System Overview</button>
-               
+                    <button 
+                        className={activeTab === "overview" ? "active" : ""} 
+                        onClick={() => setActiveTab("overview")}
+                    >
+                        📊 Overview & Status
+                    </button>
+                    <button 
+                        className={activeTab === "vehicles" ? "active" : ""} 
+                        onClick={() => setActiveTab("vehicles")}
+                    >
+                        🚜 Inspect Vehicles
+                    </button>
+                    <button 
+                        className={activeTab === "flights" ? "active" : ""} 
+                        onClick={() => setActiveTab("flights")}
+                    >
+                        ✈️ Flight Schedule
+                    </button>
+                    <button 
+                        className={activeTab === "gates" ? "active" : ""} 
+                        onClick={() => setActiveTab("gates")}
+                    >
+                        🚧 Gate Operations
+                    </button>
                 </div>
-                
+
                 <button className="btn-logout" onClick={handleLogout}>
                     🚪 Logout
                 </button>
             </aside>
-            
+
+            {/* Main Content Area */}
             <main className="admin-content">
                 <header className="content-header">
                     <div>
-                        <h1>Admin Dashboard</h1>
-                        <p className="welcome-text">Manage your system configurations and operations</p>
+                        <h1>Inspector Dashboard</h1>
+                        <p className="welcome-text">Monitor equipment health and manage ground operations</p>
                     </div>
 
                     <div className="user-profile-badge">
                         <div className="user-avatar">
-                            {currentUser.username.charAt(0).toUpperCase()}
+                            {(currentUser.username || "I").charAt(0).toUpperCase()}
                         </div>
                         <div className="user-info">
-                            <div className="user-name">{currentUser.username}</div>
+                            <div className="user-name">{currentUser.username || "Inspector"}</div>
                             <div className="user-role">{currentUser.roleName}</div>
                         </div>
                     </div>
                 </header>
 
+                {/* Status Messages */}
                 {apiMessage && <div className="dashboard-alert success">{apiMessage}</div>}
                 {apiError && <div className="dashboard-alert error">{apiError}</div>}
 
+                {/* Content Views */}
                 <div className="table-section">
-                    {activeTab === "SystemOverview" && (
-                        <SystemOverview setApiMessage={showMessage} setApiError={showError}/>
+                    {activeTab === "overview" && (
+                        <SystemOverview setApiMessage={showMessage} setApiError={showError} />
                     )}
-                    
-                  
+
+                    {activeTab === "vehicles" && (
+                        <ManageVehicle setApiMessage={showMessage} setApiError={showError} />
+                    )}
+
+                    {activeTab === "flights" && (
+                        <ManageFlight setApiMessage={showMessage} setApiError={showError} />
+                    )}
+
+                    {activeTab === "gates" && (
+                        <ManageGate setApiMessage={showMessage} setApiError={showError} />
+                    )}
                 </div>
             </main>
         </div>

@@ -1,117 +1,138 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../App.css"; // Uses our dark palette definitions
+import "../../App.css";
 
-function AdminDashboard() {
+import SystemOverview from "./SystemOverview";
+//import ManageVehicle from "./ManageVehicle";
+//import ManageGate from "./manageAirportGates";
+//import ManageFlight from "./manageFlights";
+
+function DriverDashboard() {
     const navigate = useNavigate();
-    const [adminName, setAdminName] = useState("Admin");
+    const [activeTab, setActiveTab] = useState("overview");
+    const [apiMessage, setApiMessageState] = useState("");
+    const [apiError, setApiErrorState] = useState("");
 
-    // Sample local state data for GSE tracking tables
-    const [equipment, setEquipment] = useState([
-        { id: "GSE-101", name: "Baggage Tow Tractor", status: "Active", fuel: "85%", lastCheck: "Today" },
-        { id: "GSE-204", name: "Belt Loader", status: "Maintenance", fuel: "40%", lastCheck: "Yesterday" },
-        { id: "GSE-309", name: "Pushback Tractor", status: "Active", fuel: "92%", lastCheck: "Today" },
-        { id: "GSE-402", name: "Air Start Unit", status: "Standby", fuel: "65%", lastCheck: "3 days ago" },
-    ]);
+    const showMessage = (msg) => {
+        setApiMessageState(msg);
+        if (msg) setTimeout(() => setApiMessageState(""), 2000);
+    };
 
-    // Secure screen entry verification checking localStorage
+    const showError = (err) => {
+        setApiErrorState(err);
+        if (err) setTimeout(() => setApiErrorState(""), 2000);
+    };
+
+    const [currentUser, setCurrentUser] = useState({
+        username: "",   
+        roleName: "Driver"
+    });
+
     useEffect(() => {
-        const storedUser = localStorage.getItem("username");
-        if (storedUser) {
-            setAdminName(storedUser);
-        }
-    }, []);
+        const userId = sessionStorage.getItem("user_id");
+        const roleId = sessionStorage.getItem("role_id");
+        const username = sessionStorage.getItem("username");
 
-    // Session log out wiping system tracking keys
+        
+        if (!userId || parseInt(roleId, 10) !== 6) {
+            sessionStorage.clear();
+            navigate("/", { replace: true });
+        } else {
+            setCurrentUser({
+                username: username || "Driver",
+                roleName: "Driver"
+            });
+        }
+    }, [navigate]);
+
     const handleLogout = () => {
-        localStorage.removeItem("user_id");
-        localStorage.removeItem("username");
-        navigate("/");
+        sessionStorage.clear();
+        navigate("/", { replace: true });
     };
 
     return (
         <div className="admin-container">
-            {/* 1. Dashboard Sidebar Navigation */}
+            
             <aside className="admin-sidebar">
                 <div className="sidebar-header">
-                    <h3>GSE Control Panel</h3>
+                    <h3>🔍 GSE Smart System</h3>
                 </div>
-                <nav className="sidebar-menu">
-                    <a href="#overview" className="active">📊 System Overview</a>
-                    <a href="#equipment">🚜 Equipment List</a>
-                    <a href="#users">👥 Manage Accounts</a>
-                    <a href="#reports">📈 Analytics Logs</a>
-                </nav>
-                <button onClick={handleLogout} className="btn-logout">
-                    🚪 Sign Out
+                <div className="sidebar-menu">
+                    <button 
+                        className={activeTab === "overview" ? "active" : ""} 
+                        onClick={() => setActiveTab("overview")}
+                    >
+                        📊 Overview & Status
+                    </button>
+                    <button 
+                        className={activeTab === "vehicles" ? "active" : ""} 
+                        onClick={() => setActiveTab("vehicles")}
+                    >
+                        🚜 Inspect Vehicles
+                    </button>
+                    <button 
+                        className={activeTab === "flights" ? "active" : ""} 
+                        onClick={() => setActiveTab("flights")}
+                    >
+                        ✈️ Flight Schedule
+                    </button>
+                    <button 
+                        className={activeTab === "gates" ? "active" : ""} 
+                        onClick={() => setActiveTab("gates")}
+                    >
+                        🚧 Gate Operations
+                    </button>
+                </div>
+
+                <button className="btn-logout" onClick={handleLogout}>
+                    🚪 Logout
                 </button>
             </aside>
 
-            {/* 2. Main Content Canvas */}
+            {/* Main Content Area */}
             <main className="admin-content">
                 <header className="content-header">
                     <div>
-                        <h1>System Dashboard</h1>
-                        <p className="welcome-text">Welcome back, <strong>{adminName}</strong></p>
+                        <h1>Driver Dashboard</h1>
+                        <p className="welcome-text">Monitor equipment health and manage ground operations</p>
                     </div>
-                    <div className="system-status-indicator">
-                        <span className="dot online"></span> System Live
+
+                    <div className="user-profile-badge">
+                        <div className="user-avatar">
+                            {(currentUser.username || "I").charAt(0).toUpperCase()}
+                        </div>
+                        <div className="user-info">
+                            <div className="user-name">{currentUser.username || "Driver"}</div>
+                            <div className="user-role">{currentUser.roleName}</div>
+                        </div>
                     </div>
                 </header>
 
-                {/* 3. Analytical Overview Metric Grid */}
-                <section className="metrics-grid">
-                    <div className="metric-card">
-                        <span className="metric-label">Total Assets</span>
-                        <h2 className="metric-value">48 Units</h2>
-                    </div>
-                    <div className="metric-card active-gse">
-                        <span className="metric-label">In Service</span>
-                        <h2 className="metric-value">36 Fleet</h2>
-                    </div>
-                    <div className="metric-card warning-gse">
-                        <span className="metric-label">In Workshop</span>
-                        <h2 className="metric-value">8 Alerts</h2>
-                    </div>
-                </section>
+                {/* Status Messages */}
+                {apiMessage && <div className="dashboard-alert success">{apiMessage}</div>}
+                {apiError && <div className="dashboard-alert error">{apiError}</div>}
 
-                {/* 4. Equipment Management Data Table */}
-                <section className="table-section">
-                    <div className="section-title">
-                        <h3>GSE Deployment Status</h3>
-                    </div>
-                    <div className="responsive-table-wrapper">
-                        <table className="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Asset ID</th>
-                                    <th>Equipment Name</th>
-                                    <th>Operational Status</th>
-                                    <th>Fuel/Charge</th>
-                                    <th>Last Inspected</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {equipment.map((item) => (
-                                    <tr key={item.id}>
-                                        <td><code>{item.id}</code></td>
-                                        <td><strong>{item.name}</strong></td>
-                                        <td>
-                                            <span className={`status-badge ${item.status.toLowerCase()}`}>
-                                                {item.status}
-                                            </span>
-                                        </td>
-                                        <td>{item.fuel}</td>
-                                        <td>{item.lastCheck}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
+                {/* Content Views */}
+                <div className="table-section">
+                    {activeTab === "overview" && (
+                        <SystemOverview setApiMessage={showMessage} setApiError={showError} />
+                    )}
+
+                    {activeTab === "vehicles" && (
+                        <ManageVehicle setApiMessage={showMessage} setApiError={showError} />
+                    )}
+
+                    {activeTab === "flights" && (
+                        <ManageFlight setApiMessage={showMessage} setApiError={showError} />
+                    )}
+
+                    {activeTab === "gates" && (
+                        <ManageGate setApiMessage={showMessage} setApiError={showError} />
+                    )}
+                </div>
             </main>
         </div>
     );
 }
 
-export default AdminDashboard;
+export default DriverDashboard;
