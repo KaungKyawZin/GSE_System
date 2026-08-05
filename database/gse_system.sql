@@ -33,16 +33,6 @@ CREATE TABLE IF NOT EXISTS notifications (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS activity_logs (
-    log_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    activity VARCHAR(255),
-    ip_address VARCHAR(50),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
-
 CREATE TABLE IF NOT EXISTS vehicle_types (
     vehicle_type_id INT AUTO_INCREMENT PRIMARY KEY,
     type_name VARCHAR(100) NOT NULL,
@@ -81,24 +71,6 @@ CREATE TABLE IF NOT EXISTS vehicles (
         REFERENCES vehicle_types(vehicle_type_id)
 );
 
-CREATE TABLE IF NOT EXISTS flights (
-    flight_id INT AUTO_INCREMENT PRIMARY KEY,
-
-    flight_number VARCHAR(30) NOT NULL,
-    airline VARCHAR(100),
-
-    arrival_time DATETIME,
-    departure_time DATETIME,
-
-    status ENUM(
-        'Scheduled',
-        'Boarding',
-        'Arrived',
-        'Departed',
-        'Cancelled'
-    ) DEFAULT 'Scheduled'
-);
-
 CREATE TABLE IF NOT EXISTS airport_gates (
     gate_id INT AUTO_INCREMENT PRIMARY KEY,
     gate_code VARCHAR(20) UNIQUE,
@@ -108,6 +80,27 @@ CREATE TABLE IF NOT EXISTS airport_gates (
         'Occupied',
         'Maintenance'
     ) DEFAULT 'Available'
+);
+
+
+CREATE TABLE IF NOT EXISTS flights (
+    flight_id INT AUTO_INCREMENT PRIMARY KEY,
+    gate_id INT,
+
+    flight_number VARCHAR(30) NOT NULL,
+    airline VARCHAR(100),
+
+    arrival_time DATETIME,
+    departure_time DATETIME,
+
+    status ENUM(
+        'Scheduled',
+        'Departed',
+        'Cancelled'
+    ) DEFAULT 'Scheduled',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (gate_id)
+        REFERENCES airport_gates(gate_id)  
 );
 
 CREATE TABLE IF NOT EXISTS vehicle_assignments (
@@ -166,25 +159,32 @@ CREATE TABLE IF NOT EXISTS inspections (
 
 CREATE TABLE IF NOT EXISTS inspection_items (
     item_id INT AUTO_INCREMENT PRIMARY KEY,
+    vehicle_type_id INT NOT NULL,
+    item_name VARCHAR(150) NOT NULL,
+    description TEXT,
+    inspection_method ENUM(
+        'Visual',
+        'Measurement',
+        'Functional Test'
+    ) DEFAULT 'Visual',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    item_name VARCHAR(100),
-    description TEXT
-);
+    FOREIGN KEY (vehicle_type_id)
+        REFERENCES vehicle_types(vehicle_type_id)
+); 
 
 CREATE TABLE IF NOT EXISTS inspection_details (
     detail_id INT AUTO_INCREMENT PRIMARY KEY,
-
     inspection_id INT NOT NULL,
     item_id INT NOT NULL,
-
     result ENUM(
         'Pass',
         'Fail',
-        'Needs Repair'
-    ),
-
-    remarks TEXT,
-
+        'N/A'
+    ) DEFAULT 'Pass',
+    condition_status VARCHAR(100),
+    remark TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (inspection_id)
         REFERENCES inspections(inspection_id),
 
@@ -192,89 +192,99 @@ CREATE TABLE IF NOT EXISTS inspection_details (
         REFERENCES inspection_items(item_id)
 );
 
-CREATE TABLE IF NOT EXISTS maintenance_jobs (
-    maintenance_id INT AUTO_INCREMENT PRIMARY KEY,
-
+CREATE TABLE IF NOT EXISTS maintenance_requests (
+    request_id INT AUTO_INCREMENT PRIMARY KEY,
     vehicle_id INT NOT NULL,
-
+    inspection_id INT,
+    reported_by INT NOT NULL,
     assigned_to INT,
-
-    maintenance_date DATE,
-
-    maintenance_type VARCHAR(100),
-
-    description TEXT,
-
-    cost DECIMAL(12,2),
-
-    status ENUM(
+    request_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    priority ENUM(
+        'Low',
+        'Medium',
+        'High',
+        'Critical'
+    ) DEFAULT 'Medium',
+    problem_description TEXT,
+    request_status ENUM(
         'Pending',
+        'Approved',
+        'Assigned',
         'In Progress',
-        'Completed'
+        'Completed',
+        'Rejected'
     ) DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (vehicle_id)
         REFERENCES vehicles(vehicle_id),
+
+    FOREIGN KEY (inspection_id)
+        REFERENCES inspections(inspection_id),
+
+    FOREIGN KEY (reported_by)
+        REFERENCES users(user_id),
 
     FOREIGN KEY (assigned_to)
         REFERENCES users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS spare_parts (
-    part_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS maintenance_jobs (
+    maintenance_id INT AUTO_INCREMENT PRIMARY KEY,
+    request_id INT NOT NULL,
+    vehicle_id INT NOT NULL,
+    mechanic_id INT NOT NULL,
+    maintenance_type ENUM(
+        'Preventive',
+        'Corrective',
+        'Emergency'
+    ),
+    problem_description TEXT,
+    repair_description TEXT,
+    start_date DATETIME,
+    completed_date DATETIME,
+    status ENUM(
+        'Pending',
+        'In Progress',
+        'Completed',
+        'Cancelled'
+    ) DEFAULT 'Pending',
+    remarks TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    part_name VARCHAR(150),
+    FOREIGN KEY (request_id)
+        REFERENCES maintenance_requests(request_id),
 
-    part_number VARCHAR(100) UNIQUE,
+    FOREIGN KEY (vehicle_id)
+        REFERENCES vehicles(vehicle_id),
 
-    stock_qty INT,
-
-    unit_price DECIMAL(10,2),
-
-    supplier VARCHAR(150)
-);
-
-CREATE TABLE IF NOT EXISTS maintenance_parts_used (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-
-    maintenance_id INT NOT NULL,
-
-    part_id INT NOT NULL,
-
-    quantity INT NOT NULL,
-
-    FOREIGN KEY (maintenance_id)
-        REFERENCES maintenance_jobs(maintenance_id),
-
-    FOREIGN KEY (part_id)
-        REFERENCES spare_parts(part_id)
+    FOREIGN KEY (mechanic_id)
+        REFERENCES users(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS ai_predictions (
     prediction_id INT AUTO_INCREMENT PRIMARY KEY,
     vehicle_id INT NOT NULL,
-    prediction_date DATETIME,
+    inspection_id INT NULL,
+    prediction_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     prediction_type VARCHAR(100),
+    predicted_result ENUM(
+        'Pass',
+        'Fail'
+    ),
     confidence DECIMAL(5,2),
+    risk_level ENUM(
+        'Low',
+        'Medium',
+        'High'
+    ),
     predicted_failure VARCHAR(255),
     recommendation TEXT,
-    FOREIGN KEY (vehicle_id)
-        REFERENCES vehicles(vehicle_id)
-);
-
-CREATE TABLE IF NOT EXISTS vehicle_logs (
-    log_id INT AUTO_INCREMENT PRIMARY KEY,
-    vehicle_id INT NOT NULL,
-    user_id INT,
-    log_time DATETIME,
-    odometer DECIMAL(10,2),
-    engine_hours DECIMAL(10,2),
-    fuel_level DECIMAL(5,2),
-    remarks TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (vehicle_id)
         REFERENCES vehicles(vehicle_id),
 
-    FOREIGN KEY (user_id)
-        REFERENCES users(user_id)
+    FOREIGN KEY (inspection_id)
+        REFERENCES inspections(inspection_id)
 );
