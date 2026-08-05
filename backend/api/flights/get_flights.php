@@ -9,6 +9,7 @@ try {
     $sql = "
         SELECT
             flight_id,
+            gate_id,
             flight_number,
             airline,
             arrival_time,

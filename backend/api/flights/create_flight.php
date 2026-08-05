@@ -9,6 +9,7 @@ $data = json_decode(
     true
 );
 
+$gate_id = trim($data["gate_id"] ?? "");
 $flight_number = trim($data["flight_number"] ?? "");
 $airline = trim($data["airline"] ?? "");
 $arrival_time = $data["arrival_time"] ?? null;
@@ -31,6 +32,7 @@ try {
 
     $sql = "
         INSERT INTO flights (
+            gate_id,
             flight_number,
             airline,
             arrival_time,
@@ -38,6 +40,7 @@ try {
             status
         )
         VALUES (
+            :gate_id,
             :flight_number,
             :airline,
             :arrival_time,
@@ -49,6 +52,7 @@ try {
     $stmt = $pdo->prepare($sql);
 
     $stmt->execute([
+        ":gate_id" => $gate_id,
         ":flight_number" => $flight_number,
         ":airline" => $airline,
         ":arrival_time" => $arrival_time,

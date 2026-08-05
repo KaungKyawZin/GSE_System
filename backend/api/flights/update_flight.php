@@ -9,6 +9,7 @@ $data = json_decode(
     true
 );
 
+$gate_id = trim($data["gate_id"] ?? "");
 $flight_id = $data["flight_id"] ?? null;
 $flight_number = trim($data["flight_number"] ?? "");
 $airline = trim($data["airline"] ?? "");
@@ -36,6 +37,7 @@ try {
     $sql = "
         UPDATE flights
         SET
+            gate_id = :gate_id,
             flight_number = :flight_number,
             airline = :airline,
             arrival_time = :arrival_time,
@@ -47,6 +49,7 @@ try {
     $stmt = $pdo->prepare($sql);
 
     $stmt->execute([
+        ":gate_id" => $gate_id,
         ":flight_number" => $flight_number,
         ":airline" => $airline,
         ":arrival_time" => $arrival_time,
