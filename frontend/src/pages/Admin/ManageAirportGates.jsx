@@ -36,7 +36,7 @@ function ManageAirportGates({ setApiMessage, setApiError }) {
     // 1. Fetch Airport Gates List
     const fetchGates = async () => {
         try {
-            const response = await fetch("/api/gate/get_gate.php");
+            const response = await fetch("http://localhost:8000/api/airport_gates/get_gates.php");
             const result = await response.json();
             if (result.success) {
                 setGates(Array.isArray(result.data) ? result.data : []);
@@ -70,11 +70,11 @@ function ManageAirportGates({ setApiMessage, setApiError }) {
         if (!gateToDelete) return;
 
         try {
-            const response = await fetch("/api/gate/delete_gate.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ gate_id: gateToDelete.gate_id })
-});
+            const response = await fetch("http://localhost:8000/api/airport_gates/delete_gate.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ gate_id: gateToDelete.gate_id })
+            });
             const result = await response.json();
 
             if (result.success) {
@@ -101,8 +101,9 @@ function ManageAirportGates({ setApiMessage, setApiError }) {
 
         const isEditing = editingGateId !== null;
         const endpoint = isEditing
-         ? "/api/gate/update_gate.php" 
-    : "/api/gate/create_gate.php";
+            ? "http://localhost:8000/api/airport_gates/update_gate.php"
+            : "http://localhost:8000/api/airport_gates/create_gate.php";
+
         const requestBody = isEditing
             ? { ...form, gate_id: editingGateId }
             : form;
@@ -114,7 +115,7 @@ function ManageAirportGates({ setApiMessage, setApiError }) {
                 body: JSON.stringify(requestBody)
             });
 
-            const result = await response.json(); 
+            const result = await response.json();
 
             if (result.success) {
                 const successMsg = result.message || (isEditing ? "Gate updated successfully!" : "Gate created successfully!");

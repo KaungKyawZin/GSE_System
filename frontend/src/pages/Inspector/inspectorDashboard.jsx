@@ -3,13 +3,16 @@ import { useNavigate } from "react-router-dom";
 import "../../App.css";
 
 import SystemOverview from "./SystemOverview";
-//import ManageVehicle from "./ManageVehicle";
-//import ManageGate from "./manageAirportGates";
-//import ManageFlight from "./manageFlights";
+import StartInspection from "./StartInspection";
+import VehicleInspection from "./VehicleInspection";
+import AssignedVehicles from "./AssignedVehicles";
+import ScheduleView from "./ScheduleView";
+import ReportsView from "./ReportsView";
+import NotificationsView from "./NotificationsView";
 
 function InspectorDashboard() {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState("overview");
+    const [activeTab, setActiveTab] = useState("SystemOverview");
     const [apiMessage, setApiMessageState] = useState("");
     const [apiError, setApiErrorState] = useState("");
 
@@ -58,29 +61,41 @@ function InspectorDashboard() {
                     <h3>🔍 GSE Smart System</h3>
                 </div>
                 <div className="sidebar-menu">
-                    <button 
-                        className={activeTab === "overview" ? "active" : ""} 
-                        onClick={() => setActiveTab("overview")}
+                    <button
+                        className={activeTab === "SystemOverview" ? "active" : ""}
+                        onClick={() => setActiveTab("SystemOverview")}
                     >
-                        📊 Overview & Status
+                        📊 Overview
                     </button>
-                    <button 
-                        className={activeTab === "vehicles" ? "active" : ""} 
-                        onClick={() => setActiveTab("vehicles")}
+                    <button
+                        className={activeTab === "assigned" ? "active" : ""}
+                        onClick={() => setActiveTab("assigned")}
                     >
-                        🚜 Inspect Vehicles
+                        🚚 Assigned Vehicles
                     </button>
-                    <button 
-                        className={activeTab === "flights" ? "active" : ""} 
-                        onClick={() => setActiveTab("flights")}
+                    <button
+                        className={activeTab === "schedule" ? "active" : ""}
+                        onClick={() => setActiveTab("schedule")}
                     >
-                        ✈️ Flight Schedule
+                        🗓️ Schedule
                     </button>
-                    <button 
-                        className={activeTab === "gates" ? "active" : ""} 
-                        onClick={() => setActiveTab("gates")}
+                    <button
+                        className={activeTab === "inspection" ? "active" : ""}
+                        onClick={() => setActiveTab("inspection")}
                     >
-                        🚧 Gate Operations
+                        🛠️ Inspections
+                    </button>
+                    <button
+                        className={activeTab === "reports" ? "active" : ""}
+                        onClick={() => setActiveTab("reports")}
+                    >
+                        📁 Reports
+                    </button>
+                    <button
+                        className={activeTab === "notifications" ? "active" : ""}
+                        onClick={() => setActiveTab("notifications")}
+                    >
+                        🔔 Notifications
                     </button>
                 </div>
 
@@ -114,20 +129,32 @@ function InspectorDashboard() {
 
                 {/* Content Views */}
                 <div className="table-section">
-                    {activeTab === "overview" && (
+                    {activeTab === "SystemOverview" && (
                         <SystemOverview setApiMessage={showMessage} setApiError={showError} />
                     )}
 
-                    {activeTab === "vehicles" && (
-                        <ManageVehicle setApiMessage={showMessage} setApiError={showError} />
+                    {activeTab === "assigned" && (
+                        <AssignedVehicles setApiMessage={showMessage} setApiError={showError} onInspect={(vehicleId) => { try { sessionStorage.setItem('inspect_vehicle_id', vehicleId); } catch(e){}; setActiveTab('inspection'); }} />
                     )}
 
-                    {activeTab === "flights" && (
-                        <ManageFlight setApiMessage={showMessage} setApiError={showError} />
+                    {activeTab === "schedule" && (
+                        <ScheduleView setApiMessage={showMessage} setApiError={showError} onPrepare={(vehicleId) => { try { if(vehicleId) sessionStorage.setItem('inspect_vehicle_id', vehicleId); } catch(e){}; setActiveTab('inspection'); }} />
                     )}
 
-                    {activeTab === "gates" && (
-                        <ManageGate setApiMessage={showMessage} setApiError={showError} />
+                    {activeTab === "inspection" && (
+                        <StartInspection setApiMessage={showMessage} setApiError={showError} />
+                    )}
+
+                    {activeTab === "VehicleInspection" && (
+                        <VehicleInspection setApiMessage={showMessage} setApiError={showError} />
+                    )}
+
+                    {activeTab === "reports" && (
+                        <ReportsView setApiMessage={showMessage} setApiError={showError} />
+                    )}
+
+                    {activeTab === "notifications" && (
+                        <NotificationsView setApiMessage={showMessage} setApiError={showError} />
                     )}
                 </div>
             </main>

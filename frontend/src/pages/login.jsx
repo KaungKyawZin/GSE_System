@@ -21,7 +21,7 @@ function Login() {
     const redirectUserByRole = (roleId) => {
         if (roleId === 1) navigate("/admin");
         else if (roleId === 3) navigate("/supervisor");
-        else if (roleId === 4) navigate("/inspector");
+        else if (roleId === 4) navigate("/inspectorDashboard");
         else if (roleId === 5) navigate("/technician");
         else if (roleId === 6) navigate("/driver");
         else navigate("/dashboard");

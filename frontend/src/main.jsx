@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/login'; 
 import AdminDashboard from './pages/Admin/admin'; 
 import DriverDashboard from './pages/Driver/driver'; 
-import InspectorDashboard from './pages/Inspector/inspector'; 
+import InspectorDashboard from './pages/Inspector/inspectorDashboard'; 
 import TechnicianDashboard from './pages/Technician/technician'; 
 
 import './index.css'; 
@@ -22,7 +22,7 @@ root.render(
         
         <Route path="/admin" element={<AdminDashboard />} />        
         <Route path="/driver" element={<DriverDashboard/>} />
-        <Route path="/inspector" element={<InspectorDashboard/>} />
+        <Route path="/inspectorDashboard" element={<InspectorDashboard/>} />
         <Route path="/technician" element={<TechnicianDashboard/>} />
 
         <Route path="/dashboard" element={<div style={{padding: '20px'}}><h2>General Dashboard</h2></div>} />

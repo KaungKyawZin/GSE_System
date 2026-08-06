@@ -5,11 +5,10 @@ function ManageFlights({ setApiMessage, setApiError }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingFlightId, setEditingFlightId] = useState(null);
 
-    // In-Modal Alert Notification States
+
     const [formMessage, setFormMessage] = useState("");
     const [formError, setFormError] = useState("");
 
-    // Custom Delete Confirmation Modal State
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [flightToDelete, setFlightToDelete] = useState(null);
 
@@ -35,7 +34,6 @@ function ManageFlights({ setApiMessage, setApiError }) {
         setTimeout(() => setFormMessage(""), 2000);
     };
 
-    // Format SQL DATETIME (YYYY-MM-DD HH:MM:SS) to datetime-local input format (YYYY-MM-DDTHH:MM)
     const formatForInput = (dtStr) => {
         if (!dtStr) return "";
         return dtStr.replace(" ", "T").substring(0, 16);
@@ -44,7 +42,7 @@ function ManageFlights({ setApiMessage, setApiError }) {
     // 1. Fetch Flights List
     const fetchFlights = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/flight/get_flight.php");
+            const response = await fetch("http://localhost:8000/api/flights/get_flights.php");
             const result = await response.json();
             if (result.success) {
                 setFlights(Array.isArray(result.data) ? result.data : []);
@@ -80,7 +78,7 @@ function ManageFlights({ setApiMessage, setApiError }) {
         if (!flightToDelete) return;
 
         try {
-            const response = await fetch("http://localhost:8000/api/flight/delete_flight.php", {
+            const response = await fetch("http://localhost:8000/api/flights/delete_flight.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ flight_id: flightToDelete.flight_id })
@@ -111,8 +109,8 @@ function ManageFlights({ setApiMessage, setApiError }) {
 
         const isEditing = editingFlightId !== null;
         const endpoint = isEditing
-            ? "http://localhost:8000/api/flight/update_flight.php"
-            : "http://localhost:8000/api/flight/create_flight.php";
+            ? "http://localhost:8000/api/flights/update_flight.php"
+            : "http://localhost:8000/api/flights/create_flight.php";
 
         const requestBody = isEditing
             ? { ...form, flight_id: editingFlightId }

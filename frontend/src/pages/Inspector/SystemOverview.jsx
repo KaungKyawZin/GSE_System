@@ -1,114 +1,89 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 
-function SystemOverview() {
-    const [stats, setStats] = useState({
-        totalUsers: 0,
-        totalRoles: 0,
-        activeUsers: 0,
-        inactiveUsers: 0
-    });
+export default function DashboardView({ setApiError, setActiveMenu }) {
+  const [summary, setSummary] = useState({ today: 0, pending: 0, completed: 0, failed: 0 });
+  const [upcomingFlights, setUpcomingFlights] = useState([]);
+  const [recentNotifications, setRecentNotifications] = useState([]);
 
-    const [loadingStats, setLoadingStats] = useState(true);
+  useEffect(() => {
+    fetchDashboardData(); 
+  }, []);
 
-    useEffect(() => {
-        fetchSystemOverviewData();
-    }, []);
+  const fetchDashboardData = async () => {
+    try {
+      const [sumRes, fltRes, notifRes] = await Promise.all([
+        fetch("http://localhost:8000/api/dashboard/summary.php"),
+        fetch("http://localhost:8000/api/flights/upcoming.php"),
+        fetch("http://localhost:8000/api/notifications/recent.php")
+      ]);
 
-    // Clean API call without any AI prediction calls
-    const fetchSystemOverviewData = async () => {
-        try {
-            setLoadingStats(true);
-            const [usersRes, rolesRes] = await Promise.all([
-                fetch("http://localhost:8000/api/users/get_user.php"),
-                fetch("http://localhost:8000/api/roles/get_role.php")
-            ]);
+      const sumData = await sumRes.json();
+      const fltData = await fltRes.json();
+      const notifData = await notifRes.json();
 
-            const usersData = await usersRes.json();
-            const rolesData = await rolesRes.json();
-
-            const userList = Array.isArray(usersData.data) ? usersData.data : [];
-            const roleList = Array.isArray(rolesData.data) ? rolesData.data : [];
-
-            const active = userList.filter(
-                (u) => u.status === "Active" || u.status === 1 || u.status === "1"
-            ).length;
-
-            setStats({
-                totalUsers: userList.length,
-                totalRoles: roleList.length,
-                activeUsers: active,
-                inactiveUsers: userList.length - active
-            });
-        } catch (error) {
-            console.error("Error loading overview data:", error);
-        } finally {
-            setLoadingStats(false);
-        }
-    };
-
-    if (loadingStats) {
-        return <div style={{ color: "var(--text-muted)", padding: "20px" }}>Loading System Telemetry...</div>;
+      if (sumData.success) setSummary(sumData.data);
+      if (fltData.success) setUpcomingFlights(fltData.data || []);
+      if (notifData.success) setRecentNotifications(notifData.data || []);
+    } catch (err) {
+      setApiError("Failed to sync dashboard telemetry.");
     }
+  };
 
-    return (
-        <div className="sys-overview-scope">
-            <h2>System Overview</h2>
-
-            {/* Metrics Stat Cards */}
-            <div className="dashboard-grid">
-                <div className="stat-card">
-                    <h4>Total Users</h4>
-                    <div className="value">{stats.totalUsers}</div>
-                </div>
-                <div className="stat-card">
-                    <h4>Total System Roles</h4>
-                    <div className="value">{stats.totalRoles}</div>
-                </div>
-                <div className="stat-card">
-                    <h4>Active Users</h4>
-                    <div className="value" style={{ color: "#4ade80" }}>{stats.activeUsers}</div>
-                </div>
-                <div className="stat-card">
-                    <h4>Inactive Users</h4>
-                    <div className="value" style={{ color: "#f87171" }}>{stats.inactiveUsers}</div>
-                </div>
-            </div>
-
-            {/* System Visual Progress Bars */}
-            <div className="chart-card">
-                <h3>User Account Breakdown</h3>
-                <div className="bar-group">
-                    <div className="bar-label-group">
-                        <span>Active Accounts</span>
-                        <span>
-                            {stats.activeUsers} ({stats.totalUsers ? Math.round((stats.activeUsers / stats.totalUsers) * 100) : 0}%)
-                        </span>
-                    </div>
-                    <div className="bar-track">
-                        <div
-                            className="bar-fill active"
-                            style={{ width: `${stats.totalUsers ? (stats.activeUsers / stats.totalUsers) * 100 : 0}%` }}
-                        ></div>
-                    </div>
-                </div>
-
-                <div className="bar-group">
-                    <div className="bar-label-group">
-                        <span>Inactive Accounts</span>
-                        <span>
-                            {stats.inactiveUsers} ({stats.totalUsers ? Math.round((stats.inactiveUsers / stats.totalUsers) * 100) : 0}%)
-                        </span>
-                    </div>
-                    <div className="bar-track">
-                        <div
-                            className="bar-fill inactive"
-                            style={{ width: `${stats.totalUsers ? (stats.inactiveUsers / stats.totalUsers) * 100 : 0}%` }}
-                        ></div>
-                    </div>
-                </div>
-            </div>
+  return (
+    <div>
+      <h3>📊 Inspector Operational Dashboard</h3>
+      
+      {/* Summary Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", margin: "20px 0" }}>
+        <div className="card" style={{ background: "#1e1e1e", padding: "16px", borderRadius: "8px" }}>
+          <small>Today's Inspections</small>
+          <h2>{summary.today}</h2>
         </div>
-    );
-}
+        <div className="card" style={{ background: "#1e1e1e", padding: "16px", borderRadius: "8px" }}>
+          <small>Pending Jobs</small>
+          <h2 style={{ color: "#ffb74d" }}>{summary.pending}</h2>
+        </div>
+        <div className="card" style={{ background: "#1e1e1e", padding: "16px", borderRadius: "8px" }}>
+          <small>Completed</small>
+          <h2 style={{ color: "#81c784" }}>{summary.completed}</h2>
+        </div>
+        <div className="card" style={{ background: "#1e1e1e", padding: "16px", borderRadius: "8px" }}>
+          <small>Failed / Issues</small>
+          <h2 style={{ color: "#e57373" }}>{summary.failed}</h2>
+        </div>
+      </div>
 
-export default SystemOverview;
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px" }}>
+        {/* Upcoming Flights */}
+        <div style={{ background: "#1e1e1e", padding: "16px", borderRadius: "8px" }}>
+          <h4>✈️ Upcoming Flight Assignments</h4>
+          <table style={{ width: "100%", color: "#fff", marginTop: "10px" }}>
+            <thead>
+              <tr style={{ textAlign: "left", borderBottom: "1px solid #333" }}>
+                <th>Flight</th><th>Gate</th><th>Time</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {upcomingFlights.map((f, i) => (
+                <tr key={i} style={{ borderBottom: "1px solid #222" }}>
+                  <td>{f.flight}</td><td>{f.gate}</td><td>{f.time}</td><td>{f.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Recent Notifications Summary */}
+        <div style={{ background: "#1e1e1e", padding: "16px", borderRadius: "8px" }}>
+          <h4>🔔 Live Alerts</h4>
+          <ul style={{ paddingLeft: "20px", marginTop: "10px" }}>
+            {recentNotifications.map((n, i) => (
+              <li key={i} style={{ marginBottom: "8px" }}><small>{n.type}: {n.message}</small></li>
+            ))}
+          </ul>
+          <button style={{ marginTop: "10px" }} onClick={() => setActiveMenu("notifications")}>View All Alerts</button>
+        </div>
+      </div>
+    </div>
+  );
+}

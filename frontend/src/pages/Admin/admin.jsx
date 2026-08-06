@@ -9,8 +9,6 @@ import ManageVehicleType from "./ManageVehicleType";
 import ManageVehicle from "./ManageVehicle";
 import ManageGate from "./manageAirportGates";
 import ManageFlight from "./manageFlights";
-import ManageSparePart from "./manageSpareParts";
-import ManageUsedPart from "./ManageUsedParts";
 
 function AdminDashboard() {
     const navigate = useNavigate();
@@ -71,9 +69,7 @@ function AdminDashboard() {
                     <button className={activeTab === "vehicles" ? "active" : ""} onClick={() => setActiveTab("vehicles")}>🚜 Manage Vehicles</button>
                     <button className={activeTab === "gates" ? "active" : ""} onClick={() => setActiveTab("gates")}>🚧 Manage Gates</button>
                     <button className={activeTab === "flights" ? "active" : ""} onClick={() => setActiveTab("flights")}>✈️ Manage Flights</button>
-                    <button className={activeTab === "spareParts" ? "active" : ""} onClick={() => setActiveTab("spareParts")}>⚙️ Manage Spare Parts</button>
-                    <button className={activeTab === "UsedParts" ? "active" : ""} onClick={() => setActiveTab("UsedParts")}>♻️ Manage Used Parts</button>
-                </div>
+                 </div>
                 
                 <button className="btn-logout" onClick={handleLogout}>
                     🚪 Logout
