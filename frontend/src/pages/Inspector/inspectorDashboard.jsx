@@ -37,7 +37,7 @@ function InspectorDashboard() {
         const username = sessionStorage.getItem("username");
 
         
-        if (!userId || parseInt(roleId, 10) !== 4) {
+        if (!userId || parseInt(roleId, 10) !== 2) {
             sessionStorage.clear();
             navigate("/", { replace: true });
         } else {

@@ -10,22 +10,23 @@ function Login() {
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    // Automatically redirect authenticated users
-    useEffect(() => {
-        const storedRoleId = localStorage.getItem("role_id");
-        if (storedRoleId) {
-            redirectUserByRole(parseInt(storedRoleId, 10));
-        }
-    }, []);
-
     const redirectUserByRole = (roleId) => {
         if (roleId === 1) navigate("/admin");
-        else if (roleId === 3) navigate("/supervisor");
-        else if (roleId === 4) navigate("/inspectorDashboard");
-        else if (roleId === 5) navigate("/technician");
-        else if (roleId === 6) navigate("/driver");
+        else if (roleId === 2) navigate("/inspectorDashboard");
+        else if (roleId === 3) navigate("/technician");
+        else if (roleId === 4) navigate("/driver");
         else navigate("/dashboard");
     };
+    // Automatically redirect authenticated users
+    useEffect(() => {
+    const storedRoleId = sessionStorage.getItem("role_id");
+
+    if (storedRoleId) {
+        redirectUserByRole(parseInt(storedRoleId, 10));
+    }
+}, []);
+
+    
 
     const handleLogin = async (e) => {
         e.preventDefault();
