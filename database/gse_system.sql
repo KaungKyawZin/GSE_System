@@ -288,3 +288,33 @@ CREATE TABLE IF NOT EXISTS ai_predictions (
     FOREIGN KEY (inspection_id)
         REFERENCES inspections(inspection_id)
 );
+
+CREATE TABLE inspection_measurements (
+    measurement_id INT AUTO_INCREMENT PRIMARY KEY,
+
+    inspection_id INT NOT NULL,
+    vehicle_id INT NOT NULL,
+
+    engine_oil_level DECIMAL(10,2),
+    brake_condition VARCHAR(50),
+    tire_pressure DECIMAL(10,2),
+    battery_voltage DECIMAL(10,2),
+    coolant_level DECIMAL(10,2),
+    fuel_level DECIMAL(10,2),
+
+    head_light VARCHAR(50),
+    indicator VARCHAR(50),
+    steering_condition VARCHAR(50),
+
+    measured_by INT NOT NULL,
+    measured_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (inspection_id)
+        REFERENCES inspections(inspection_id),
+
+    FOREIGN KEY (vehicle_id)
+        REFERENCES vehicles(vehicle_id),
+
+    FOREIGN KEY (measured_by)
+        REFERENCES users(user_id)
+);
