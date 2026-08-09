@@ -678,11 +678,16 @@ admin-table-extend { width: 100%; border-collapse: collapse; text-align: left; }
                 }
 
                 .stat-card {
-                    background: var(--card-bg, #ffffff);
+                    background: var(--card-bg,#1E293B);
                     border: 1px solid var(--border-color, #e2e8f0);
                     border-radius: 10px;
                     padding: 18px;
                     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+                }
+                .stat-card:hover {
+                  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                  transform:translateY(-2px);
+                  transition: all 0.2s ease-in-out;
                 }
 
                 .stat-card h4 {
@@ -1007,7 +1012,7 @@ admin-table-extend { width: 100%; border-collapse: collapse; text-align: left; }
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  background: #374151;
+  background: #F8FAFC;
   transition: background 0.2s;
 }
 

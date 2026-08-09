@@ -273,18 +273,18 @@ export default function AssignedVehicles({
                     {v.vehicle_photo ? (
                       <>
                         <img
-                          src={`${window.location.origin}/${v.vehicle_photo}`}
-                          alt="thumb"
-                          className="compact-thumb"
-                          style={{
-                            width: 72,
-                            height: 72,
-                            objectFit: "cover",
-                            borderRadius: 8,
-                          }}
-                        />
-                        <img
-                          src={`${window.location.origin}/${v.vehicle_photo}`}
+    src={`http://localhost:8000/${v.vehicle_photo}`}
+    alt="Vehicle"
+    className="compact-thumb"
+    style={{
+        width: 72,
+        height: 72,
+        objectFit: "cover",
+        borderRadius: 8
+    }}
+/>
+                      <img
+    src={`http://localhost:8000/${v.vehicle_photo}`}
                           alt="preview"
                           className="large-hover-preview"
                         />
@@ -311,7 +311,8 @@ export default function AssignedVehicles({
                     <h4 style={{ margin: 0 }}>
                       {v.vehicle_number || `#${v.id}`}
                     </h4>
-                    <div className="muted" style={{ marginBottom: 8 }}>
+                    <div className="muted" style={{ fontSize: 13 }}>
+                          Vehicle Type:{" "}
                       {v.type_name || "Type"}
                     </div>
                     <div style={{ fontSize: 13 }}>
@@ -347,14 +348,14 @@ export default function AssignedVehicles({
                     alignItems: "center",
                   }}
                 >
-                  <button className="action-btn" onClick={() => openInspect(v)}>
-                    Inspect
+                  <button className="action-btn edit" onClick={() => openInspect(v)}>
+                   AI Detection
                   </button>
                   <button
-                    className="action-btn"
+                    className="action-btn delete"
                     onClick={() => onInspect && onInspect(v.id)}
                   >
-                    Open in Inspections
+                    Manual Inspect
                   </button>
                 </div>
               </div>
@@ -387,8 +388,8 @@ export default function AssignedVehicles({
                 }}
               >
                 {selected.raw && selected.raw.vehicle_photo ? (
-                  <img
-                    src={`/${selected.raw.vehicle_photo}`}
+                <img
+    src={`http://localhost:8000/${selected.raw.vehicle_photo}`}
                     alt="Vehicle"
                     style={{
                       width: "100px",

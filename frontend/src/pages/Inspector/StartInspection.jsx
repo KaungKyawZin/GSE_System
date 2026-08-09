@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+﻿﻿import React, { useState, useEffect } from "react";
 
 export default function StartInspection({ setApiError, selectedVehicle, onStartInspection }) {
   const [loading, setLoading] = useState(true);

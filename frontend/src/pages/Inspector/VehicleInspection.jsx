@@ -6,12 +6,12 @@ export default function VehicleInspectionView({ selectedJob, setApiMessage, setA
     vehicle_id: "GSE-104", type: "Baggage Tractor", plate_no: "BGG-8821", gate: "Gate 04", flight: "SQ-702"
   });
 
-  // Physical Checklist State
+
   const [checklist, setChecklist] = useState({
     Tire: false, Brake: false, Engine: false, Battery: false, Fuel: false, Lights: false, Safety: false
   });
 
-  // Image Upload State
+
   const [photos, setPhotos] = useState({ front: null, rear: null, left: null, right: null, damage: null });
 
   // AI State
@@ -42,7 +42,7 @@ export default function VehicleInspectionView({ selectedJob, setApiMessage, setA
     }
   };
 
-  // Submit Final Decision (Approve / Reject)
+
   const handleDecision = async (decision) => {
     const formData = new FormData();
     formData.append("vehicle_id", vehicleInfo.vehicle_id);
